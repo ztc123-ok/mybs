@@ -7,9 +7,8 @@ import scrapy
 
 
 class SightsItem(scrapy.Item):
-    # define the fields for your item here like:
-    url = scrapy.Field()
     name = scrapy.Field()
+    url = scrapy.Field()
     comment_score = scrapy.Field()
     comment_count = scrapy.Field()
     heat_score = scrapy.Field()
@@ -22,5 +21,9 @@ class SightsItem(scrapy.Item):
     discount = scrapy.Field()
     comments_user = scrapy.Field()
     comments = scrapy.Field()
+    comments_time = scrapy.Field()
+    comments_ip = scrapy.Field()
     comments_user_timesort = scrapy.Field()
     comments_timesort = scrapy.Field()
+    comments_time_timesort = scrapy.Field()
+    comments_ip_timesort = scrapy.Field()
