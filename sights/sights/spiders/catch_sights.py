@@ -236,7 +236,7 @@ class CatchSightsSpider(scrapy.Spider):
         yield items
 
     def clean(self,list,restr=''):
-        # 过滤表情,我还得专门下个emoji的库可还行
+        # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行
         # 谁家取昵称还带表情啊
         try:
             co = re.compile(u'['u'\U0001F300-\U0001F64F' u'\U0001F680-\U0001F6FF'u'\u2600-\u2B55]+')
