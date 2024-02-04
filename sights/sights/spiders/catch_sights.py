@@ -9,15 +9,19 @@ from selenium.webdriver.common.by import By
 from get_user_agent import get_user_agent_of_pc
 import random
 import emoji
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class CatchSightsSpider(scrapy.Spider):
     name = "catch_sights"
     allowed_domains = ["you.ctrip.com"]
     start_urls = ['https://you.ctrip.com/']
     base_url = "https://you.ctrip.com/sight/hangzhou14/s0-p{}.html#sightname"
+    limit_page = 301
 
     def start_requests(self):
-        for i in range(1,3):
+        #共1-300页景点
+        for i in range(1,301):
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -28,7 +32,7 @@ class CatchSightsSpider(scrapy.Spider):
         html_tree = etree.HTML(html)
         #景点详情链接
         sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
-        for url in(sight_url[1:2]):
+        for url in sight_url:
             items = SightsItem()
             items['url'] = url
             yield scrapy.Request(url,callback=self.parse_detail,meta={'items': items})
@@ -37,7 +41,7 @@ class CatchSightsSpider(scrapy.Spider):
         chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
         options = webdriver.ChromeOptions()
         # 隐藏窗口
-        #options.add_argument("--headless")
+        options.add_argument("--headless")
         options.add_argument("disable-infobars")
         options.add_argument("user-agent=" + get_user_agent_of_pc())
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -74,15 +78,13 @@ class CatchSightsSpider(scrapy.Spider):
         for i in range(len(photos)):
             photos[i] = re.findall(r"[(](.*?)[)]", photos[i])[0]
         #景点介绍     p标签下需要拼接
-        introduction = ''.join(html_tree.xpath("//*[@class='detailModuleRef']//div[@class='LimitHeightText']/div/p/text()"))
+        introduction = ''.join(html_tree.xpath("//*[@class='detailModuleRef']//div[@class='LimitHeightText']/div/p/text() | //*[@class='detailModuleRef']//div[@class='LimitHeightText']/div/text()"))
         #优待政策     div标签下需要拼接
         discount = ''.join(html_tree.xpath("//*[@class='detailModuleRef']/div/div[contains(text(), '优待政策')]/following-sibling::div[1]/div/text()"))
         #用户昵称
         comments_user = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[1]/div[2]/text()")
         #评论
         comments = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[2]/text()")
-        self.clean(comments_user)
-        self.clean(comments)
 
         # 评论时间  2024-02-01
         comments_time = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
@@ -96,20 +98,20 @@ class CatchSightsSpider(scrapy.Spider):
                     n + 1))
             comments_pic.append(','.join(pic))
 
-        items['name'] = ''.join(name)
+        items['name'] = self.clean(''.join(name))
         items['comment_score'] = ''.join(comment_score)
         items['comment_count'] = ''.join(comment_count)
         items['heat_score'] = ''.join(heat_score)
-        items['address'] = ''.join(address)
+        items['address'] = self.clean(''.join(address))
         items['open_state'] = ''.join(open_state)
         items['open_time'] = ''.join(open_time)
         items['phone'] = ''.join(phone)
         items['photos'] = ",".join(photos)
-        items['introduction'] = introduction
-        items['discount'] = discount
+        items['introduction'] = self.clean(introduction)
+        items['discount'] = self.clean(discount)
 
         chrome.get(items['url'])
-        time.sleep(3 + random.random())
+        time.sleep(6 + random.random())
         flag = 'true'
         try:
             next_button = chrome.find_element(by=By.XPATH,
@@ -118,16 +120,20 @@ class CatchSightsSpider(scrapy.Spider):
         except:
             print("评论小于1页")
 
-        print('智能排序page:', page1)
+        print('智能排序page1:', page1)
         # true(没有下一页) false(有下一页)
-        while (flag == 'false' and page1 < 2):
+        while (flag == 'false' and page1 < self.limit_page):
             next_page_buttun = chrome.find_element(by=By.XPATH,
                                                value="//div[@class='myPagination']/ul/li[@title='下一页']/span/a")
-            next_page_buttun.click()
+            chrome.execute_script("arguments[0].click();", next_page_buttun)
+            # next_page_buttun.click()
+            # WebDriverWait(chrome, timeout=10).until(
+            #     EC.presence_of_element_located(
+            #         (By.XPATH, "//div[@class='myPagination']/ul/li[@title='下一页']/span/a"))).click()
             time.sleep(3 + random.random())
 
             page1 = page1+1
-            print('page:', page1)
+            print('智能排序page1:', page1)
             html = chrome.page_source
             html_tree = etree.HTML(html)
 
@@ -137,8 +143,6 @@ class CatchSightsSpider(scrapy.Spider):
             # 下一页评论
             next_comments = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[2]/text()")
-            self.clean(next_comments_user)
-            self.clean(next_comments)
             # 下一页评论时间
             next_comments_time = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
             # 下一页评论ip
@@ -163,7 +167,7 @@ class CatchSightsSpider(scrapy.Spider):
 
         #切换到时间排序
         try:
-            time.sleep(3 + random.random())
+            time.sleep(6 + random.random())
             time_buttun = chrome.find_element(by=By.XPATH,
                                                      value="//*[@class='commentModuleRef']/div/div[@class='sortList']/span[@class='sortTag']")
             #time_buttun.click()
@@ -171,7 +175,7 @@ class CatchSightsSpider(scrapy.Spider):
         except:
             print("这个景点可能没有评价")
 
-        print('时间排序page:', page2)
+        print('时间排序page2:', page2)
         time.sleep(3 + random.random())
         html = chrome.page_source
         html_tree = etree.HTML(html)
@@ -181,8 +185,6 @@ class CatchSightsSpider(scrapy.Spider):
             "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[1]/div[2]/text()")
         # 评论
         comments_timesort = html_tree.xpath("//*[@class='commentModuleRef']/div/div[@class='commentList']/div/div[2]/div[2]/text()")
-        self.clean(comments_user_timesort)
-        self.clean(comments_timesort)
         # 评论时间  2024-02-01
         comments_time_timesort = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
         # IP属地  浙江
@@ -203,14 +205,18 @@ class CatchSightsSpider(scrapy.Spider):
             print("评论小于1页")
 
         # true(没有下一页) false(有下一页)
-        while (flag == 'false' and page2 < 3):
+        while (flag == 'false' and page2 < self.limit_page):
             next_page_buttun = chrome.find_element(by=By.XPATH,
                                                         value="//div[@class='myPagination']/ul/li[@title='下一页']/span/a")
-            next_page_buttun.click()
+            chrome.execute_script("arguments[0].click();", next_page_buttun)
+            # next_page_buttun.click()
+            # WebDriverWait(chrome, timeout=10).until(
+            #     EC.presence_of_element_located(
+            #         (By.XPATH, "//div[@class='myPagination']/ul/li[@title='下一页']/span/a"))).click()
             time.sleep(3 + random.random())
 
             page2 = page2 + 1
-            print('page:', page2)
+            print('时间排序page2:', page2)
             html = chrome.page_source
             html_tree = etree.HTML(html)
 
@@ -220,8 +226,6 @@ class CatchSightsSpider(scrapy.Spider):
             # 下一页评论
             next_comments_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[2]/text()")
-            self.clean(next_comments_user_timesort)
-            self.clean(next_comments_timesort)
             # 下一页评论时间
             next_comments_time_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
@@ -246,13 +250,13 @@ class CatchSightsSpider(scrapy.Spider):
                                                    value="//div[@class='myPagination']/ul/li[@title='下一页']")
             flag = next_button.get_attribute("aria-disabled")
 
-        items['comments_user'] = comments_user
-        items['comments'] = comments
+        items['comments_user'] = self.clean(comments_user)
+        items['comments'] = self.clean(comments)
         items['comments_time'] = comments_time
         items['comments_ip'] = comments_ip
         items['comments_pic'] = comments_pic
-        items['comments_user_timesort'] = comments_user_timesort
-        items['comments_timesort'] = comments_timesort
+        items['comments_user_timesort'] = self.clean(comments_user_timesort)
+        items['comments_timesort'] = self.clean(comments_timesort)
         items['comments_time_timesort'] = comments_time_timesort
         items['comments_ip_timesort'] = comments_ip_timesort
         items['comments_pic_timesort'] = comments_pic_timesort
@@ -262,15 +266,21 @@ class CatchSightsSpider(scrapy.Spider):
         yield items
 
     def clean(self,list,restr=''):
-        # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行
+        # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
         # 谁家取昵称还带表情啊
         try:
             co = re.compile(u'['u'\U0001F300-\U0001F64F' u'\U0001F680-\U0001F6FF'u'\u2600-\u2B55]+')
         except re.error:
             co = re.compile(u'('u'\ud83c[\udf00-\udfff]|'u'\ud83d[\udc00-\ude4f\ude80-\udeff]|'u'[\u2600-\u2B55])+')
-        for i in range(len(list)):
-            list[i] = co.sub(restr, list[i])
-            list[i] = emoji.replace_emoji(list[i], "")
+        if (isinstance(list, str)):
+            list = co.sub(restr, list)
+            list = emoji.replace_emoji(list, restr)
+            list = list.replace("'", restr).replace('"', restr)
+        else:
+            for i in range(len(list)):
+                list[i] = co.sub(restr, list[i])
+                list[i] = emoji.replace_emoji(list[i], restr)
+                list[i] = list[i].replace("'", restr).replace('"', restr)
 
         return list
 
