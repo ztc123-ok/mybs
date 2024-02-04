@@ -32,12 +32,14 @@ class CatchSightsSpider(scrapy.Spider):
         html_tree = etree.HTML(html)
         #景点详情链接
         sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
+        print("urls",sight_url)
         for url in sight_url:
             items = SightsItem()
             items['url'] = url
-            yield scrapy.Request(url,callback=self.parse_detail,meta={'items': items})
+            #yield scrapy.Request(url,callback=self.parse_detail,meta={'items': items})
+            yield self.parse_detail(items) #返回并继续执行，使部分内存得以释放
 
-    def parse_detail(self, response):
+    def parse_detail(self, items):
         chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
         options = webdriver.ChromeOptions()
         # 隐藏窗口
@@ -50,11 +52,13 @@ class CatchSightsSpider(scrapy.Spider):
         # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
         # https://you.ctrip.com/sight/hangzhou14/s0-p2.html#sightname
         # https://you.ctrip.com/sight/Hangzhou14/s0-p1000.html#sightname
+        chrome.get(items['url'])
+        time.sleep(6 + random.random())
 
-        items = response.meta['items']
+        #items = response.meta['items']
         page1 = 1 #智能排序
         page2 = 1 #时间排序
-        html = response.text
+        html = chrome.page_source
         html_tree = etree.HTML(html)
 
         #景点名称    灵隐寺
@@ -110,8 +114,6 @@ class CatchSightsSpider(scrapy.Spider):
         items['introduction'] = self.clean(introduction)
         items['discount'] = self.clean(discount)
 
-        chrome.get(items['url'])
-        time.sleep(6 + random.random())
         flag = 'true'
         try:
             next_button = chrome.find_element(by=By.XPATH,
@@ -263,7 +265,7 @@ class CatchSightsSpider(scrapy.Spider):
 
         chrome.quit()
 
-        yield items
+        return items
 
     def clean(self,list,restr=''):
         # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错

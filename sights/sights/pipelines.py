@@ -46,7 +46,7 @@ class SightsPipeline:
             except BaseException as e:
                 print('插入景点有误:',e)
                 with open("erro.txt", "a", encoding='utf-8') as f:
-                    f.writelines("景点url:" + item['url'] + "\n"+e+"\n")
+                    f.writelines("景点url:" + item['url'] + "\n"+str(e)+"\n")
         # 更新景点数据
         else:
             # 创建sql语句
@@ -63,7 +63,7 @@ class SightsPipeline:
             except BaseException as e:
                 print('更新景点有误',e)
                 with open("erro.txt", "a", encoding='utf-8') as f:
-                    f.writelines("景点url:" + item['url'] + "\n"+e+"\n")
+                    f.writelines("景点url:" + item['url'] + "\n"+str(e)+"\n")
 
         # min_len = min(len(item['comments_user']), len(item['comments']), len(item['comments_ip']),
         #               len(item['comments_pic']), len(item['comments_time']))
@@ -71,7 +71,7 @@ class SightsPipeline:
                       len(item['comments_pic']), len(item['comments_time']))
         if(len(item['comments_user']) != min_len or len(item['comments']) != min_len or len(item['comments_ip']) != min_len or len(item['comments_pic']) != min_len or len(item['comments_time']) != min_len):
             with open("erro.txt", "a", encoding='utf-8') as f:
-                f.writelines(f"{len(item['comments_user'])}, {len(item['comments'])}, {len(item['comments_ip'])}, {len(item['comments_pic'])}, {len(item['comments_time'])}"+ str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))+"\n")
+                f.writelines(f"{len(item['comments_user'])}, {len(item['comments'])}, {len(item['comments_ip'])}, {len(item['comments_pic'])}, {len(item['comments_time'])},"+ str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))+"\n")
         # 插入时间排序评论
         for i in range(min_len):
             sql = "select id from xc_sight where url = '{}'".format(item['url'])
@@ -101,7 +101,7 @@ class SightsPipeline:
                                 i] + "," + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
                     with open("erro.txt", "a", encoding='utf-8') as f:
-                        f.writelines(mystr + "\n"+e+"\n")
+                        f.writelines(mystr + "\n"+str(e)+"\n")
 
         # min_len = min(len(item['comments_user_timesort']), len(item['comments_timesort']), len(item['comments_ip_timesort']),
         #               len(item['comments_pic_timesort']), len(item['comments_time_timesort']))
@@ -112,7 +112,7 @@ class SightsPipeline:
                 item['comments_time_timesort']) != min_len):
             with open("erro.txt", "a", encoding='utf-8') as f:
                 f.writelines(
-                    f"{len(item['comments_user_timesort'])}, {len(item['comments_timesort'])}, {len(item['comments_ip_timesort'])}, {len(item['comments_pic_timesort'])}, {len(item['comments_time_timesort'])}" + str(
+                    f"{len(item['comments_user_timesort'])}, {len(item['comments_timesort'])}, {len(item['comments_ip_timesort'])}, {len(item['comments_pic_timesort'])}, {len(item['comments_time_timesort'])}," + str(
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + "\n")
         # 插入智能排序评论
         for i in range(min_len):
@@ -145,7 +145,7 @@ class SightsPipeline:
                             item['comments_pic_timesort'][i] + "," + item['comments_time_timesort'][i] + "," + str(
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                     with open("erro.txt", "a", encoding='utf-8') as f:
-                        f.writelines(mystr + "\n"+e+"\n")
+                        f.writelines(mystr + "\n"+str(e)+"\n")
 
         # 返回Item
         return item
