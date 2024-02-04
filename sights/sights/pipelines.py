@@ -102,8 +102,8 @@ class SightsPipeline:
         #插入智能排序评论数据
         if(len(item['comments']) > 0 and len(rest) > 0):
             for i in range(len(item['comments'])):
-                sql = "INSERT INTO xc_comments (sight_id,comments_user,comments,comments_ip,comments_time,create_time) VALUES ({},'{}','{}','{}','{}','{}')".format(
-                    rest[0]['id'],item['comments_user'][i],item['comments'][i],item['comments_ip'][i],item['comments_time'][i],time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                sql = "INSERT INTO xc_comments (sight_id,comments_user,comments,comments_ip,comments_pic,comments_time,create_time) VALUES ({},'{}','{}','{}','{}','{}','{}')".format(
+                    rest[0]['id'],item['comments_user'][i],item['comments'][i],item['comments_ip'][i],item['comments_pic'][i],item['comments_time'][i],time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 )
                 try:
                     cursor.execute(sql)
@@ -111,7 +111,7 @@ class SightsPipeline:
                     print('插入智能的评论有误')
                     mystr = str(rest[0]['id']) + "," + item['comments_user'][i] + "," + \
                             item['comments'][i] + "," + item['comments_ip'][i] + "," + \
-                            item['comments_time'][i] + "," + str(
+                            +item['comments_pic'][i] + "," + item['comments_time'][i] + "," + str(
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                     with open("erro.txt", "a", encoding='utf-8') as f:
                         f.writelines(mystr + "\n")
@@ -119,14 +119,14 @@ class SightsPipeline:
         # 插入时间排序评论数据
         if (len(item['comments_timesort']) > 0 and len(rest) > 0):
             for i in range(len(item['comments_timesort'])):
-                sql = "INSERT INTO xc_comments_timesort (sight_id,comments_user,comments,comments_ip,comments_time,create_time) VALUES ({},'{}','{}','{}','{}','{}')".format(
-                    rest[0]['id'], item['comments_user_timesort'][i], item['comments_timesort'][i],item['comments_ip_timesort'][i],item['comments_time_timesort'][i] ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                sql = "INSERT INTO xc_comments_timesort (sight_id,comments_user,comments,comments_ip,comments_pic,comments_time,create_time) VALUES ({},'{}','{}','{}','{}','{}','{}')".format(
+                    rest[0]['id'], item['comments_user_timesort'][i], item['comments_timesort'][i],item['comments_ip_timesort'][i],item['comments_pic_timesort'][i],item['comments_time_timesort'][i] ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 )
                 try:
                     cursor.execute(sql)
                 except:
                     print('插入时间的评论有误')
-                    mystr = str(rest[0]['id'])+","+item['comments_user_timesort'][i]+","+item['comments_timesort'][i]+","+item['comments_ip_timesort'][i]+","+item['comments_time_timesort'][i]+","+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                    mystr = str(rest[0]['id'])+","+item['comments_user_timesort'][i]+","+item['comments_timesort'][i]+","+item['comments_ip_timesort'][i]+","+item['comments_pic_timesort'][i]+","+item['comments_time_timesort'][i]+","+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                     with open("erro.txt", "a",encoding='utf-8') as f:
                         f.writelines(mystr+ "\n")
 

@@ -34,7 +34,7 @@ class CatchSightsSpider(scrapy.Spider):
             yield scrapy.Request(url,callback=self.parse_detail,meta={'items': items})
 
     def parse_detail(self, response):
-        chrome_driver = "C:/Users/周/Desktop/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+        chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
         options = webdriver.ChromeOptions()
         # 隐藏窗口
         #options.add_argument("--headless")
@@ -88,7 +88,13 @@ class CatchSightsSpider(scrapy.Spider):
         comments_time = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
         # IP属地  浙江
         comments_ip = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/span/text()[2]")
-
+        # 评论图片  url * n
+        comments_pic = []
+        for n in range(len(comments)):
+            pic = html_tree.xpath(
+                "//*[@class='commentModuleRef']//div[@class='commentList']/div[{}]/div[2]/div[@class='commentImgList']/a/@href".format(
+                    n + 1))
+            comments_pic.append(','.join(pic))
 
         items['name'] = ''.join(name)
         items['comment_score'] = ''.join(comment_score)
@@ -137,6 +143,12 @@ class CatchSightsSpider(scrapy.Spider):
             next_comments_time = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
             # 下一页评论ip
             next_comments_ip = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/span/text()[2]")
+            # 下一页评论图片
+            for n in range(len(next_comments)):
+                pic = html_tree.xpath(
+                    "//*[@class='commentModuleRef']//div[@class='commentList']/div[{}]/div[2]/div[@class='commentImgList']/a/@href".format(
+                        n + 1))
+                comments_pic.append(','.join(pic))
 
             # 合并
             comments_user = comments_user + next_comments_user
@@ -175,7 +187,13 @@ class CatchSightsSpider(scrapy.Spider):
         comments_time_timesort = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
         # IP属地  浙江
         comments_ip_timesort = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/span/text()[2]")
-
+        # 评论图片  url * n
+        comments_pic_timesort = []
+        for n in range(len(comments)):
+            pic = html_tree.xpath(
+                "//*[@class='commentModuleRef']//div[@class='commentList']/div[{}]/div[2]/div[@class='commentImgList']/a/@href".format(
+                    n + 1))
+            comments_pic_timesort.append(','.join(pic))
 
         try:
             next_button = chrome.find_element(by=By.XPATH,
@@ -197,23 +215,29 @@ class CatchSightsSpider(scrapy.Spider):
             html_tree = etree.HTML(html)
 
             # 下一页用户昵称
-            next_page_comments_user_timesort = html_tree.xpath(
+            next_comments_user_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[1]/div[2]/text()")
             # 下一页评论
-            next_page_comments_timesort = html_tree.xpath(
+            next_comments_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[2]/text()")
-            self.clean(next_page_comments_user_timesort)
-            self.clean(next_page_comments_timesort)
+            self.clean(next_comments_user_timesort)
+            self.clean(next_comments_timesort)
             # 下一页评论时间
             next_comments_time_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/text()")
             # 下一页评论ip
             next_comments_ip_timesort = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/span/text()[2]")
+            # 下一页评论图片
+            for n in range(len(next_comments_timesort)):
+                pic = html_tree.xpath(
+                    "//*[@class='commentModuleRef']//div[@class='commentList']/div[{}]/div[2]/div[@class='commentImgList']/a/@href".format(
+                        n + 1))
+                comments_pic_timesort.append(','.join(pic))
 
             # 合并
-            comments_user_timesort = comments_user_timesort + next_page_comments_user_timesort
-            comments_timesort = comments_timesort + next_page_comments_timesort
+            comments_user_timesort = comments_user_timesort + next_comments_user_timesort
+            comments_timesort = comments_timesort + next_comments_timesort
             comments_time_timesort = comments_time_timesort + next_comments_time_timesort
             comments_ip_timesort = comments_ip_timesort + next_comments_ip_timesort
 
@@ -226,10 +250,12 @@ class CatchSightsSpider(scrapy.Spider):
         items['comments'] = comments
         items['comments_time'] = comments_time
         items['comments_ip'] = comments_ip
+        items['comments_pic'] = comments_pic
         items['comments_user_timesort'] = comments_user_timesort
         items['comments_timesort'] = comments_timesort
         items['comments_time_timesort'] = comments_time_timesort
         items['comments_ip_timesort'] = comments_ip_timesort
+        items['comments_pic_timesort'] = comments_pic_timesort
 
         chrome.quit()
 
