@@ -283,14 +283,18 @@ class CatchSightsSpider(scrapy.Spider):
         if (isinstance(list, str)):
             list = co.sub(restr, list)
             list = emoji.replace_emoji(list, restr)
-            list = list.replace("'", restr).replace('"', restr)
-            list = list.replace(' ',restr).replace('\n',restr)
+            list = list.replace("'", restr)
+            list = list.replace('"', restr)
+            list = list.replace(' ',restr)
+            list = list.replace('\n',restr)
         else:
             for i in range(len(list)):
                 list[i] = co.sub(restr, list[i])
                 list[i] = emoji.replace_emoji(list[i], restr)
-                list[i] = list[i].replace("'", restr).replace('"', restr)
-                list[i] = list[i].replace(' ',restr).replace('\n'.restr)
+                list[i] = list[i].replace("'", restr)
+                list[i] = list[i].replace('"', restr)
+                list[i] = list[i].replace(' ',restr)
+                list[i] = list[i].replace('\n',restr)
 
         return list
 
