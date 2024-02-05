@@ -21,7 +21,7 @@ class CatchSightsSpider(scrapy.Spider):
 
     def start_requests(self):
         #共1-300页景点
-        for i in range(2,4):
+        for i in range(2,3):
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -283,12 +283,14 @@ class CatchSightsSpider(scrapy.Spider):
         if (isinstance(list, str)):
             list = co.sub(restr, list)
             list = emoji.replace_emoji(list, restr)
-            list = list.replace("'", restr).replace('"', restr).replace(' ',restr).replace('\n',restr)
+            list = list.replace("'", restr).replace('"', restr)
+            list = list.replace(' ',restr).replace('\n',restr)
         else:
             for i in range(len(list)):
                 list[i] = co.sub(restr, list[i])
                 list[i] = emoji.replace_emoji(list[i], restr)
-                list[i] = list[i].replace("'", restr).replace('"', restr).replace(' ',restr).replace('\n'.restr)
+                list[i] = list[i].replace("'", restr).replace('"', restr)
+                list[i] = list[i].replace(' ',restr).replace('\n'.restr)
 
         return list
 

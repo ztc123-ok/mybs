@@ -146,14 +146,12 @@ class SightsPipeline:
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                     with open("erro.txt", "a", encoding='utf-8') as f:
                         f.writelines(mystr + "\n"+str(e)+"\n")
+        cursor.close()
+        connect.close()
 
         # 返回Item
         return item
 
-    # 关闭资源
-    def close_spider(self, spider):
-        self.cursor.close()
-        self.connect.close()
 
 
 
