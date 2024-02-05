@@ -21,7 +21,7 @@ class CatchSightsSpider(scrapy.Spider):
 
     def start_requests(self):
         #共1-300页景点
-        for i in range(1,301):
+        for i in range(2,4):
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -132,9 +132,11 @@ class CatchSightsSpider(scrapy.Spider):
             # WebDriverWait(chrome, timeout=10).until(
             #     EC.presence_of_element_located(
             #         (By.XPATH, "//div[@class='myPagination']/ul/li[@title='下一页']/span/a"))).click()
-            time.sleep(3 + random.random())
+            time.sleep(2 + random.random())
 
             page1 = page1+1
+            if page1 % 10 == 0:
+                time.sleep(1 + random.random())
             print('智能排序page1:', page1)
             html = chrome.page_source
             html_tree = etree.HTML(html)
@@ -193,7 +195,7 @@ class CatchSightsSpider(scrapy.Spider):
         comments_ip_timesort = html_tree.xpath("//*[@class='commentModuleRef']//div[@class='commentList']/div/div[2]/div[@class='commentFooter']/div[1]/span/text()[2]")
         # 评论图片  url * n
         comments_pic_timesort = []
-        for n in range(len(comments)):
+        for n in range(len(comments_timesort)):
             pic = html_tree.xpath(
                 "//*[@class='commentModuleRef']//div[@class='commentList']/div[{}]/div[2]/div[@class='commentImgList']/a/@href".format(
                     n + 1))
@@ -215,9 +217,11 @@ class CatchSightsSpider(scrapy.Spider):
             # WebDriverWait(chrome, timeout=10).until(
             #     EC.presence_of_element_located(
             #         (By.XPATH, "//div[@class='myPagination']/ul/li[@title='下一页']/span/a"))).click()
-            time.sleep(3 + random.random())
+            time.sleep(2 + random.random())
 
             page2 = page2 + 1
+            if page2 % 10 == 0:
+                time.sleep(1 + random.random())
             print('时间排序page2:', page2)
             html = chrome.page_source
             html_tree = etree.HTML(html)
@@ -271,18 +275,20 @@ class CatchSightsSpider(scrapy.Spider):
         # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
         # 谁家取昵称还带表情啊
         try:
-            co = re.compile(u'['u'\U0001F300-\U0001F64F' u'\U0001F680-\U0001F6FF'u'\u2600-\u2B55]+')
+            co = re.compile(
+                u'['u'\U0001F300-\U0001F64F'u'\U00010000-\U0010ffff' u'\U0001F680-\U0001F6FF'u'\u2600-\u2B55]+')
         except re.error:
-            co = re.compile(u'('u'\ud83c[\udf00-\udfff]|'u'\ud83d[\udc00-\ude4f\ude80-\udeff]|'u'[\u2600-\u2B55])+')
+            co = re.compile(
+                u'('u'\ud83c[\udf00-\udfff]|'u'[\uD800-\uDBFF][\uDC00-\uDFFF]'u'\ud83d[\udc00-\ude4f\ude80-\udeff]|'u'[\u2600-\u2B55])+')
         if (isinstance(list, str)):
             list = co.sub(restr, list)
             list = emoji.replace_emoji(list, restr)
-            list = list.replace("'", restr).replace('"', restr)
+            list = list.replace("'", restr).replace('"', restr).replace(' ',restr).replace('\n',restr)
         else:
             for i in range(len(list)):
                 list[i] = co.sub(restr, list[i])
                 list[i] = emoji.replace_emoji(list[i], restr)
-                list[i] = list[i].replace("'", restr).replace('"', restr)
+                list[i] = list[i].replace("'", restr).replace('"', restr).replace(' ',restr).replace('\n'.restr)
 
         return list
 

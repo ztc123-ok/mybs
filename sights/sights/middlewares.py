@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+from twisted.internet.error import TCPTimedOutError, TimeoutError
 
 
 class SightsSpiderMiddleware:
