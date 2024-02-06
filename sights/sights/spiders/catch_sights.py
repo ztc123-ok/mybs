@@ -9,19 +9,18 @@ from selenium.webdriver.common.by import By
 from get_user_agent import get_user_agent_of_pc
 import random
 import emoji
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 class CatchSightsSpider(scrapy.Spider):
     name = "catch_sights"
     allowed_domains = ["you.ctrip.com"]
-    start_urls = ['https://you.ctrip.com/']
+    start_urls = ['https://you.ctrip.com']
     base_url = "https://you.ctrip.com/sight/hangzhou14/s0-p{}.html#sightname"
+    #搜索url格式：https://you.ctrip.com/sight/Hangzhou14.html?雷峰塔
     limit_page = 301
 
     def start_requests(self):
         #共1-300页景点
-        for i in range(2,3):
+        for i in range(32,301):
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -287,6 +286,7 @@ class CatchSightsSpider(scrapy.Spider):
             list = list.replace('"', restr)
             list = list.replace(' ',restr)
             list = list.replace('\n',restr)
+            list = list.replace('\\', restr)
         else:
             for i in range(len(list)):
                 list[i] = co.sub(restr, list[i])
@@ -295,6 +295,7 @@ class CatchSightsSpider(scrapy.Spider):
                 list[i] = list[i].replace('"', restr)
                 list[i] = list[i].replace(' ',restr)
                 list[i] = list[i].replace('\n',restr)
+                list[i] = list[i].replace('\\', restr)
 
         return list
 
