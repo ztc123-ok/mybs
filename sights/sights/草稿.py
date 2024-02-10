@@ -55,12 +55,14 @@ import pymysql
 #
 # mystr = "这次坐车是家人公认在杭州最开心的一次了，天气凉爽坐在上层，钱塘江两岸很美，就是木头座位'坐着不舒服。,未知,,2018-09-10,2024-02-04 17:35:36"
 # print(clean(mystr))
-from get_user_agent import get_user_agent_of_pc
-headers = {
-  'User-Agent': get_user_agent_of_pc()
-}
-r = requests.get('https://you.ctrip.com/sight/hangzhou14/79679205.html', headers=headers)
-html_tree = etree.HTML(r.text)
-comment_score = html_tree.xpath("//*[@class='comment']/div/p[1]/text()")
-print(''.join(comment_score))
-print(len(comment_score)==0)
+# from get_user_agent import get_user_agent_of_pc
+# headers = {
+#   'User-Agent': get_user_agent_of_pc()
+# }
+# r = requests.get('https://you.ctrip.com/sight/hangzhou14/79679205.html', headers=headers)
+# html_tree = etree.HTML(r.text)
+# comment_score = html_tree.xpath("//*[@class='comment']/div/p[1]/text()")
+# print(''.join(comment_score))
+# print(len(comment_score)==0)
+a = None
+print("123{}".format(a))

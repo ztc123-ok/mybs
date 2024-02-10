@@ -45,7 +45,7 @@ class QunarSpider(scrapy.Spider):
     def start_requests(self):
         #共1-135页景点
         for i in range(self.start_page,self.end_page):
-            time.sleep(1 + random.random())
+            time.sleep(2 + random.random())
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -59,6 +59,7 @@ class QunarSpider(scrapy.Spider):
         sight_url = html_tree.xpath("//div[@class='right_bar']/ul/li/div[2]/h2/a/@href")
         print("urls",sight_url)
         for url in sight_url[:2]:
+            time.sleep(2 + random.random())
             items = QunarspiderItem()
             items['para_name'] = self.para_name
             items['url'] = url
