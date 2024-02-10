@@ -9,18 +9,46 @@ from selenium.webdriver.common.by import By
 from get_user_agent import get_user_agent_of_pc
 import random
 import emoji
+import argparse
 
 class CatchSightsSpider(scrapy.Spider):
     name = "catch_sights"
     allowed_domains = ["you.ctrip.com"]
     start_urls = ['https://you.ctrip.com']
+    # 共1-300页景点
     base_url = "https://you.ctrip.com/sight/hangzhou14/s0-p{}.html#sightname"
     #搜索url格式：https://you.ctrip.com/sight/Hangzhou14.html?雷峰塔
-    limit_page = 301
+    limit_page = 301 #限制评论页数
+    start_page = 1 #爬取起始页
+    end_page = 301 #爬取结束页
+
+    def __init__(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--start_page', default=None)
+        parser.add_argument('--end_page', default=None)
+        parser.add_argument('--limit_page', default=None)
+        args = parser.parse_args()
+        start_page = args.start_page
+        end_page = args.end_page
+        limit_page = args.limit_page
+        if start_page == None:
+            print("start_page未传递使用默认参数 1,传参请使用--start_page")
+        else:
+            print('init中接收到start_page: ', start_page)
+            self.start_page = start_page
+        if end_page == None:
+            print("end_page未传递使用默认参数 301,传参请使用--end_page")
+        else:
+            print('init中接收到end_page: ', end_page)
+            self.end_page = end_page
+        if limit_page == None:
+            print("limit_page未传递使用默认参数 301,传参请使用--limit_page")
+        else:
+            self.limit_page = limit_page
 
     def start_requests(self):
         #共1-300页景点
-        for i in range(32,301):
+        for i in range(self.start_page,self.end_page):
             url = self.base_url.format(i)
             with open("record.txt", "a") as f:
                 f.writelines(str(i)+"\n")
@@ -33,6 +61,9 @@ class CatchSightsSpider(scrapy.Spider):
         sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
         print("urls",sight_url)
         for url in sight_url:
+            if 'hangzhou14' not in url:
+                print("这不是杭州的景点")
+                continue
             items = SightsItem()
             items['url'] = url
             #yield scrapy.Request(url,callback=self.parse_detail,meta={'items': items})
@@ -49,8 +80,6 @@ class CatchSightsSpider(scrapy.Spider):
         chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
         chrome.maximize_window()
         # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
-        # https://you.ctrip.com/sight/hangzhou14/s0-p2.html#sightname
-        # https://you.ctrip.com/sight/Hangzhou14/s0-p1000.html#sightname
         chrome.get(items['url'])
         time.sleep(6 + random.random())
 
@@ -62,7 +91,7 @@ class CatchSightsSpider(scrapy.Spider):
 
         #景点名称    灵隐寺
         name = html_tree.xpath("//*[@class='titleView']/div[1]/h1/text()")
-        #景点评分   4.7 （注：满分5）
+        #景点评分   4.7 （注：满分5）|| 暂无评分
         comment_score = html_tree.xpath("//*[@class='comment']/div/p[1]/text()")
         #景点评论数  16407
         comment_count = html_tree.xpath("//*[@class='comment']/p/span/text()[1]")

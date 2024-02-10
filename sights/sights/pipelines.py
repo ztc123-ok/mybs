@@ -29,6 +29,14 @@ class SightsPipeline:
         print("count", rest)
         # count [{'id': 16}]
 
+        # 数据类型为空异常处理
+        if(len(item['comment_score']) == 0):
+            item['comment_score'] = '0.0'
+        if(len(item['heat_score']) == 0):
+            item['heat_score'] = '0.0'
+        if(len(item['comment_count']) == 0):
+            item['comment_count'] = '0'
+
         # 插入景点数据
         if (len(rest) == 0):
             # 创建sql语句

@@ -1,0 +1,12 @@
+本项目中使用到的第三方依赖：
+scrapy
+argparse
+本项目中使用到的自定义依赖：
+get_user_agent
+
+请确保您的python环境安装了这些依赖
+您可以通过pip下载第三方依赖
+您可以通过手动复制的方式将本项目中的get_user_agent.py添加到您的python环境中
+
+如果您想直接运行该项目，建议您通过命令窗口，在crawl.py的目录下运行.\crawl.py方便看到错误信息和输出信息
+

@@ -1,0 +1,181 @@
+erro
+景点url:https://travel.qunar.com/p-oi708174-yanzilingdiaotai
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi3742167-meijiawucun
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：5小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi711203-yaolinxianjing
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi719686-wushantianfeng
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：4小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi7524332-zhongshangongyuan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：0.8小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi719997-shuangfengchayun
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi7468800-tonglutianzidifengjing
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：4小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi7524331-zhongguomeishuxueyuan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:56','2024-02-08 15:50:56')' at line 1")
+景点url:https://travel.qunar.com/p-oi714762-zhejiangdaxue
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi7528710-zhejiangdaxue
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi7528682-yongfushansi
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi7528723-xilingyinshe
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi708478-span_classcolorangehang
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi706856-beigaofeng
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：4小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi7528730-maojiabujingqu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi717234-hupaogongyuan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi5789863-qingzhiwu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi711021-liuheta
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi703817-huxueyanguju
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi8678998-yanggongdi
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi703160-qiantangjiangdaqiao
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi720741-yunqizhujing
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:57','2024-02-08 15:50:57')' at line 1")
+景点url:https://travel.qunar.com/p-oi5475382-nanshanlu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi7524538-taiziwangongyuan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi7642230-nanpingwanzhong
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi719673-pinghuqiuyue
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：0.5小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi702346-yuewangmiaojingqu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi721164-liulangwenying
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi722721-damingshanfeilaifeng
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3天']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi707862-gushan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi720346-jiuxiyanshu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi718192-huagangguanyu
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi711621-jinghangdayunhespan_c
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3天']','2024-02-08 15:50:58','2024-02-08 15:50:58')' at line 1")
+景点url:https://travel.qunar.com/p-oi717247-duanqiaocanxue
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：0.5小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi5116379-baidi
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：1小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi716866-santanyinyue
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi718525-quyuanfenghe
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi3742045-nansongyujie
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi706138-span_classcolorangehang
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3天']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi705578-xixiguojiashidigongyuan
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3天']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi719604-sudi
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi714820-qinghefangjie
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi708604-leifengta
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：2小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi710142-lingyinsi
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3小时']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi708952-xihufengjingmingsheng
+(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '建议游览时间：3天']','2024-02-08 15:50:59','2024-02-08 15:50:59')' at line 1")
+景点url:https://travel.qunar.com/p-oi719997-shuangfengchayun
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi708174-yanzilingdiaotai
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7468800-tonglutianzidifengjing
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi711203-yaolinxianjing
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi714762-zhejiangdaxue
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi719686-wushantianfeng
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi3742167-meijiawucun
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7524332-zhongshangongyuan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7524331-zhongguomeishuxueyuan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7528730-maojiabujingqu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7528682-yongfushansi
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7528710-zhejiangdaxue
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7528723-xilingyinshe
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi711021-liuheta
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi5789863-qingzhiwu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi717234-hupaogongyuan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi706856-beigaofeng
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi708478-span_classcolorangehang
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi8678998-yanggongdi
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi703817-huxueyanguju
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi720741-yunqizhujing
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi5475382-nanshanlu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi703160-qiantangjiangdaqiao
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi702346-yuewangmiaojingqu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7524538-taiziwangongyuan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi719673-pinghuqiuyue
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi7642230-nanpingwanzhong
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi721164-liulangwenying
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi722721-damingshanfeilaifeng
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi711621-jinghangdayunhespan_c
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi718525-quyuanfenghe
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi5116379-baidi
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi707862-gushan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi718192-huagangguanyu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi716866-santanyinyue
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi720346-jiuxiyanshu
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi717247-duanqiaocanxue
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi3742045-nansongyujie
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi719604-sudi
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi706138-span_classcolorangehang
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi705578-xixiguojiashidigongyuan
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi710142-lingyinsi
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi714820-qinghefangjie
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi708604-leifengta
+(1364, "Field 'id' doesn't have a default value")
+景点url:https://travel.qunar.com/p-oi708952-xihufengjingmingsheng
+(1364, "Field 'id' doesn't have a default value")
