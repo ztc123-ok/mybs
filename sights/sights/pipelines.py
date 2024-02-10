@@ -105,7 +105,7 @@ class SightsPipeline:
                 except BaseException as e:
                     print('插入智能的评论有误',e)
                     mystr = str(rest[0][0]) + "," + item['comments_user'][i] + "," + item['comments'][i] + "," + \
-                            item['comments_ip'][i] + "," + item['comments_pic'][i] + "," + item['comments_time'][
+                            ip + "," + item['comments_pic'][i] + "," + item['comments_time'][
                                 i] + "," + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
                     with open("erro.txt", "a", encoding='utf-8') as f:
@@ -149,7 +149,7 @@ class SightsPipeline:
                 except BaseException as e:
                     print('插入时间的评论有误',e)
                     mystr = str(rest[0][0]) + "," + item['comments_user_timesort'][i] + "," + \
-                            item['comments_timesort'][i] + "," + item['comments_ip_timesort'][i] + "," + \
+                            item['comments_timesort'][i] + "," + ip + "," + \
                             item['comments_pic_timesort'][i] + "," + item['comments_time_timesort'][i] + "," + str(
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                     with open("erro.txt", "a", encoding='utf-8') as f:
