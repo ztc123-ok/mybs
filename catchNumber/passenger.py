@@ -23,7 +23,6 @@ def get_passenger(url):
     time.sleep(3 + random.random())
     html = chrome.page_source
     html_tree = etree.HTML(html)
-    chrome.quit()
 
     #景点名称    灵隐寺
     sight_name = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[2]/text()")
@@ -52,10 +51,30 @@ def get_passenger(url):
 
     print("开始向数据库插入客流数据。。。。")
     for i in range(len(sight_name)):
-        sql = "INSERT INTO passenger (sight_name,passenger_index,traffic_index,traffic_type,traffic_mileage,average_speed,mydate) VALUES ('{}',{},{},'{}',{},{},'{}')"\
-        .format(
-        sight_name[i], passenger_index[i], traffic_index[i],traffic_type[i], traffic_mileage[i],average_speed[i],time.strftime("%Y-%m-%d", time.localtime())
-        )
+        # 两个网站景点名不一样，去携程找一下名字
+        xc_url = "https://you.ctrip.com/sight/Hangzhou14.html?keywords={}".format(sight_name[i])
+        chrome.get(xc_url)
+        time.sleep(2 + random.random())
+        html = chrome.page_source
+        html_tree = etree.HTML(html)
+        sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
+        if sight_name[i] == '杭州海底世界':
+            sight_url = 'https://you.ctrip.com/sight/hangzhou14/2476481.html'
+        #查询景点id 和 热度
+        sql = "SELECT id,heat_score FROM xc_sight where url='{}'".format(sight_url[0])
+        cursor.execute(sql)
+        rest = cursor.fetchall()
+        if (len(rest) == 0):
+            sight_id = 'null'
+            heat_score = 'null'
+        else:
+            sight_id = rest[0][0]
+            heat_score = rest[0][1]
+
+        sql = "INSERT INTO passenger (sight_id,sight_name,passenger_index,traffic_index,traffic_type,traffic_mileage,average_speed,heat_score,mydate) VALUES ({},'{}',{},{},'{}',{},{},{},'{}')"\
+            .format(
+            sight_id,sight_name[i], passenger_index[i], traffic_index[i],traffic_type[i], traffic_mileage[i],average_speed[i],heat_score,time.strftime("%Y-%m-%d", time.localtime())
+            )
         try:
             print("正在插入客流数据数据。。。")
             cursor.execute(sql)
@@ -68,10 +87,11 @@ def get_passenger(url):
                 f.writelines(mystr + "\n" + str(e) + "\n")
     cursor.close()
     connect.close()
+    chrome.quit()
 
 # 车主指南
 url = 'https://www.icauto.com.cn/gonglu/yd_3301001.html'
-#get_passenger(url)
+get_passenger(url)
 
 
 
