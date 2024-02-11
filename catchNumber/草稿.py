@@ -11,5 +11,5 @@ import pymysql
 # rest = cursor.fetchall()
 # latest_date = max(rest)
 # print(latest_date)
-list = [1,2,3,4,5,6]
-print(list[:1])
+mydict = {"a":2}
+print("b" in mydict)

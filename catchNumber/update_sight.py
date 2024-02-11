@@ -9,6 +9,36 @@ import datetime
 import emoji
 import re
 from dateutil.parser import parse
+
+def get_url(sight_name):
+    chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+    options = webdriver.ChromeOptions()
+    # 隐藏窗口
+    options.add_argument("--headless")
+    options.add_argument("disable-infobars")
+    options.add_argument("user-agent=" + get_user_agent_of_pc())
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
+    chrome.maximize_window()
+    # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
+
+    # 拼接携程搜索网址
+    xc_url = "https://you.ctrip.com/sight/Hangzhou14.html?keywords={}".format(sight_name)
+    chrome.get(xc_url)
+    time.sleep(3 + random.random())
+    html = chrome.page_source
+    html_tree = etree.HTML(html)
+
+    # 解析出网页第一个景点网址
+    sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
+    sight_url = sight_url[0]
+    if sight_name == '杭州海底世界':
+        sight_url = 'https://you.ctrip.com/sight/hangzhou14/2476481.html'
+
+    chrome.quit()
+
+    return sight_url
+
 def update_sight(url):
     print("正在更新景点。。。",url)
     chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
