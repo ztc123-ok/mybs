@@ -2,6 +2,36 @@ import pandas as pd
 import numpy as np
 import jieba
 from sklearn.model_selection import train_test_split
+import emoji
+import re
+def clean(list,restr=''):
+    # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
+    # 谁家取昵称还带表情啊
+    try:
+        co = re.compile(
+            u'['u'\U0001F300-\U0001F64F'u'\U00010000-\U0010ffff' u'\U0001F680-\U0001F6FF'u'\u2600-\u2B55]+')
+    except re.error:
+        co = re.compile(
+            u'('u'\ud83c[\udf00-\udfff]|'u'[\uD800-\uDBFF][\uDC00-\uDFFF]'u'\ud83d[\udc00-\ude4f\ude80-\udeff]|'u'[\u2600-\u2B55])+')
+    if (isinstance(list, str)):
+        list = co.sub(restr, list)
+        list = emoji.replace_emoji(list, restr)
+        list = list.replace("'", restr)
+        list = list.replace('"', restr)
+        list = list.replace(' ',restr)
+        list = list.replace('\n',restr)
+        list = list.replace('\\', restr)
+    else:
+        for i in range(len(list)):
+            list[i] = co.sub(restr, list[i])
+            list[i] = emoji.replace_emoji(list[i], restr)
+            list[i] = list[i].replace("'", restr)
+            list[i] = list[i].replace('"', restr)
+            list[i] = list[i].replace(' ',restr)
+            list[i] = list[i].replace('\n',restr)
+            list[i] = list[i].replace('\\', restr)
+
+    return list
 
 print("正在加载评论数据。。。")
 data = pd.read_csv("./t_comment_detail.csv", usecols=['content', 'rating'])
@@ -16,13 +46,13 @@ with open(file_stop, 'r', encoding='utf-8-sig') as f:
     for line in lines:
         lline = line.strip()  # line 是str类型,strip 去掉\n换行符
         stop.append(lline)  # 将stop 是列表形式
-print("stop[]:",stop)
+print("stop[]:",stop[:20])
 
 dictionary = []  # 定义词典
 clear_dataset = []  # 定义清洗后的数据集
 for comment in data:
     words = []  # 存放切词后、去除停用词后的句子词组
-
+    comment[0] = clean(comment[0])
     # 使用jieba对评论进行分词
     for word in jieba.lcut(comment[0]):
 
@@ -109,8 +139,8 @@ good_vec_trained = np.log(good_vec / good_num)  # 用于存放所有的 P(特征
 bad_vec_trained = np.log(bad_vec / bad_num)  # 用于存放所有的 P(特征i|差评)向量，每个值代表一个概率
 
 print('好评率: {}'.format(good_pro))
-print('good_vec_trained is: {}'.format(good_vec_trained))
-print('bad_vec_trained is: {}'.format(bad_vec_trained))
+print('good_vec_trained is: {}'.format(good_vec_trained[:20]))
+print('bad_vec_trained is: {}'.format(bad_vec_trained[:20]))
 
 success_count = 0
 
@@ -133,5 +163,11 @@ for i in range(len(X_test)):
 
     if (y_test[i] == result):  # 若预测答案与真实答案相等，预测正确数量增加
         success_count += 1
+
+    # 保存模型
+with open("dictionary.csv", "a", encoding='utf-8') as f:
+    f.writelines("good_pro"+","+str(good_pro)+"\n")
+    for i in range(len(dictionary)):
+        f.writelines(dictionary[i] + "," + str(good_vec_trained[i]) + "," + str(bad_vec_trained[i]) + "\n")
 
 print('朴素贝叶斯模型(bayes)预测的准确度: {}'.format(success_count / len(X_test)))
