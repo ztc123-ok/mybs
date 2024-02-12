@@ -3,6 +3,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset,DataLoader
 from tqdm import tqdm
+from collections import Counter
 import torch.nn as nn
 import re
 import emoji
@@ -167,6 +168,8 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, shuffle=True)
 
+    print("Before undersampling: ", Counter(y_train))
+
     # 分别输出训练集的 X, y形状， 测试集的X, y的形状
     print(X_train[:5])
     print(y_train[:5])
@@ -177,6 +180,7 @@ if __name__ == "__main__":
     epoch = 10
     lr = 0.001
     class_num = len(set(y_train))
+    # 使用GPU训练模型
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     # word_2_index：所有word对应的数字
@@ -189,11 +193,13 @@ if __name__ == "__main__":
     train_loader = DataLoader(train_dataset,batch_size,shuffle=False)
 
     model = TextCNNModel(words_embedding,max_len,class_num).to(device)
-    #
+    # 优化器
     opt = torch.optim.AdamW(model.parameters(),lr=lr)
 
     for e in range(epoch):
         for batch_idx,batch_label in train_loader:
+            batch_idx = batch_idx.to(device)
+            batch_label = batch_label.to(device)
             loss = model.forward(batch_idx,batch_label)
             loss.backward()
             opt.step()
