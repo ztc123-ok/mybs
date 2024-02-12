@@ -4,6 +4,8 @@ import jieba
 from sklearn.model_selection import train_test_split
 import emoji
 import re
+from collections import Counter
+
 def clean(list,restr=''):
     # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
     # 谁家取昵称还带表情啊
@@ -34,6 +36,7 @@ def clean(list,restr=''):
     return list
 
 print("正在加载评论数据。。。")
+# 好评：40613 中评：2472 差评：530
 data = pd.read_csv("./t_comment_detail.csv", usecols=['content', 'rating'])
 data = data.values # 评论文本数据 类别数据（好评/差评）
 # print("data[:2]:",data[:2])
@@ -51,6 +54,8 @@ print("stop[]:",stop[:20])
 dictionary = []  # 定义词典
 clear_dataset = []  # 定义清洗后的数据集
 for comment in data:
+    if comment[1] == '中评':
+        comment[1] = '差评'
     words = []  # 存放切词后、去除停用词后的句子词组
     comment[0] = clean(comment[0])
     # 使用jieba对评论进行分词
@@ -111,6 +116,21 @@ print('X_train.shape',X_train.shape)
 print('y_train.shape',y_train.shape)
 print('X_test.shape',X_test.shape)
 print('y_test.shape',y_test.shape)
+
+# 欠采样后效果反而不是很好
+# from imblearn.under_sampling import RandomUnderSampler
+#
+# print("Before undersampling: ", Counter(y_train))
+#
+# # 调用方法进行欠采样
+# undersample = RandomUnderSampler(sampling_strategy='majority')
+#
+# # 获得欠采样后的样本
+# X_train, y_train = undersample.fit_resample(X_train, y_train)
+#
+# # 统计欠采样后的类别占比情况
+# print("After undersampling: ", Counter(y_train))
+
 len_dic = len(dictionary)  # 词典的长度，即所有词的长度
 
 good_pro = np.sum(y_train == '好评') / len(X_train)  # 好评率
@@ -171,3 +191,4 @@ with open("dictionary.csv", "a", encoding='utf-8') as f:
         f.writelines(dictionary[i] + "," + str(good_vec_trained[i]) + "," + str(bad_vec_trained[i]) + "\n")
 
 print('朴素贝叶斯模型(bayes)预测的准确度: {}'.format(success_count / len(X_test)))
+# best: 0.6657113378424854
