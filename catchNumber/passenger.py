@@ -10,8 +10,10 @@ import emoji
 import re
 from dateutil.parser import parse
 
-def get_passenger(url):
-    chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+chrome_path = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+
+def get_chrome(chrome_path):
+    chrome_driver = chrome_path
     options = webdriver.ChromeOptions()
     # 隐藏窗口
     options.add_argument("--headless")
@@ -20,6 +22,11 @@ def get_passenger(url):
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
     chrome.maximize_window()
+    return chrome
+
+def get_passenger(url):
+    print("正在获取车流数据。。。")
+    chrome = get_chrome(chrome_path)
     # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
 
     chrome.get(url)
@@ -31,8 +38,12 @@ def get_passenger(url):
     sight_name = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[2]/text()")
     #客流指数    84.71
     passenger_index = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[3]/text()")
+    #客流指数较平日     161.2% ↑
+    passenger_than = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[4]/text()")
     #拥堵指数    1.171
     traffic_index = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[5]/text()")
+    #拥堵指数较平日     -11% ↓
+    traffic_than = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[6]/text()")
     #拥堵类型    畅通
     traffic_type = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[5]/span/b/text()")
     #拥堵里程    0.33（公里）
@@ -79,9 +90,9 @@ def get_passenger(url):
             sight_id = rest[0][0]
             heat_score = rest[0][1]
 
-        sql = "INSERT INTO passenger (sight_id,sight_name,passenger_index,traffic_index,traffic_type,traffic_mileage,average_speed,heat_score,mydate) VALUES ({},'{}',{},{},'{}',{},{},{},'{}')"\
+        sql = "INSERT INTO passenger (sight_id,sight_name,passenger_index,passenger_than,traffic_index,traffic_than,traffic_type,traffic_mileage,average_speed,heat_score,mydate) VALUES ({},'{}',{},'{}',{},'{}','{}',{},{},{},'{}')"\
             .format(
-            sight_id,sight_name[i], passenger_index[i], traffic_index[i],traffic_type[i], traffic_mileage[i],average_speed[i],heat_score,time.strftime("%Y-%m-%d", time.localtime())
+            sight_id,sight_name[i], passenger_index[i],passenger_than[i] ,traffic_index[i],traffic_than[i],traffic_type[i], traffic_mileage[i],average_speed[i],heat_score,time.strftime("%Y-%m-%d", time.localtime())
             )
         try:
             print("正在插入客流数据数据。。。")
@@ -99,15 +110,7 @@ def get_passenger(url):
 
 def update_sight(url):
     print("正在更新景点。。。",url)
-    chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
-    options = webdriver.ChromeOptions()
-    # 隐藏窗口
-    options.add_argument("--headless")
-    options.add_argument("disable-infobars")
-    options.add_argument("user-agent=" + get_user_agent_of_pc())
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
-    chrome.maximize_window()
+    chrome = get_chrome(chrome_path)
     # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
 
     chrome.get(url)
@@ -350,9 +353,14 @@ def clean(list,restr=''):
 
     return list
 
-# 车主指南
-url = 'https://www.icauto.com.cn/gonglu/yd_3301001.html'
-get_passenger(url)
+
+import argparse
+
+if __name__ == "__main__":
+
+    # 车主指南
+    url = 'https://www.icauto.com.cn/gonglu/yd_3301001.html'
+    get_passenger(url)
 
 
 

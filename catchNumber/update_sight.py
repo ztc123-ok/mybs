@@ -10,8 +10,11 @@ import emoji
 import re
 from dateutil.parser import parse
 
-def get_url(sight_name):
-    chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+chrome_path = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+
+# 创建一个chrome
+def get_chrome(chrome_path):
+    chrome_driver = chrome_path
     options = webdriver.ChromeOptions()
     # 隐藏窗口
     options.add_argument("--headless")
@@ -20,6 +23,11 @@ def get_url(sight_name):
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
     chrome.maximize_window()
+    return chrome
+
+def get_url(sight_name):
+    print("正在获取景点网址。。。",sight_name)
+    chrome = get_chrome(chrome_path)
     # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
 
     # 拼接携程搜索网址
@@ -36,20 +44,12 @@ def get_url(sight_name):
         sight_url = 'https://you.ctrip.com/sight/hangzhou14/2476481.html'
 
     chrome.quit()
-
+    print("获取到景点网址：",sight_url)
     return sight_url
 
 def update_sight(url):
     print("正在更新景点。。。",url)
-    chrome_driver = "D:/桌面/selenium_example/chromedriver-win64/chromedriver-win64/chromedriver.exe"
-    options = webdriver.ChromeOptions()
-    # 隐藏窗口
-    options.add_argument("--headless")
-    options.add_argument("disable-infobars")
-    options.add_argument("user-agent=" + get_user_agent_of_pc())
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome = webdriver.Chrome(options=options, executable_path=chrome_driver)
-    chrome.maximize_window()
+    chrome = get_chrome(chrome_path)
     # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
 
     chrome.get(url)
@@ -291,3 +291,43 @@ def clean(list,restr=''):
             list[i] = list[i].replace('\\', restr)
 
     return list
+
+def get_all_url():
+    connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",charset="utf8")
+    cursor = connect.cursor()
+
+    sql = "SELECT url FROM xc_sight"
+    cursor.execute(sql)
+
+    rest = cursor.fetchall()
+    cursor.close()
+    connect.close()
+
+    return rest
+
+import argparse
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url', type=str, default=None)
+    args = parser.parse_args()
+    # 字符串类型不需要自己加 ''
+    print("使用--url 更新指定景点(支持网址和景点名称)，参数为 all 时更新全部景点")
+    url = args.url
+    if url == None:
+        print("未接收到参数，使用默认参数 None")
+    elif url == 'all':
+        print("接收到参数：", url)
+        all_url = get_all_url()
+        print("共计 个景点：",len(all_url))
+        # 有近2000个景点，更新一次需要近10个小时，这个太慢了，得跑多线程
+        for per_url in all_url:
+            update_sight(per_url[0])
+
+    elif "http://" in url or "https://" in url:
+        print("接收到参数：", url)
+        update_sight(url)
+    else:
+        print("接收到参数：", url)
+        url = get_url(url)
+        update_sight(url)
