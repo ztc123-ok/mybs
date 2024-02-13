@@ -4,12 +4,11 @@ import torch
 from torch.utils.data import Dataset,DataLoader
 from tqdm import tqdm
 from collections import Counter
+import json
 import torch.nn as nn
 import re
 import emoji
 import jieba
-
-data_path = "./t_comment_detail.csv"
 
 #清洗文本数据
 def clean(list,restr=''):
@@ -87,6 +86,9 @@ def build_curpus(train_texts,embedding_num):
     #words_embedding 通常指的是这样一个嵌入向量矩阵，其中每一行代表词汇表中的一个单词的嵌入向量
     #nn.Embedding用来将一个数字变成一个指定维度的向量,作为模型的第一层,这n维的向量会参与模型训练并且得到更新，从而数字会有一个更好的128维向量的表示
     #这里返回所有数字对应的向量表
+    tf = open("word_2_index.json", "w")
+    json.dump(word_2_index, tf)
+    tf.close()
     return word_2_index,nn.Embedding(len(word_2_index),embedding_num)
 
 class TextDataset(Dataset):
@@ -100,7 +102,7 @@ class TextDataset(Dataset):
         label = int(self.all_label[index])
 
         # 获取字索引，将句子转换成索引表
-        text_idx = [self.word_2_index.get(i,"1") for i in text]
+        text_idx = [self.word_2_index.get(i,1) for i in text]
         # 不够填充
         text_idx = text_idx + [0] * (self.max_len - len(text_idx))
         # 构建数据集
@@ -113,12 +115,12 @@ class TextDataset(Dataset):
 
 # 块由三部分组成：卷积，激活，最大池化
 class Block(nn.Module):
-    def __init__(self,kernel_s,embedding_num,max_len):
+    def __init__(self,kernel_s,embedding_num,max_len,hidden_num):
         super().__init__()
         # 卷积模块
         # 1句话*通道为1*每句话7个词*每个词向量维度是5  [1 * 1 * 7 * 5](batch * in_channel * sentence_len * emb_num)
         # 如果做图片通道为3，对应rgb三色
-        self.cnn = nn.Conv2d(in_channels=1,out_channels=2,kernel_size=(kernel_s,embedding_num))
+        self.cnn = nn.Conv2d(in_channels=1,out_channels=hidden_num,kernel_size=(kernel_s,embedding_num))
         # 激活函数（可超参调整）
         self.act = nn.ReLU()
         # 从池中取一个最大值（你需要计算出池的大小）
@@ -133,16 +135,18 @@ class Block(nn.Module):
         return m
 
 class TextCNNModel(nn.Module):
-    def __init__(self,emb_matrix,max_len,class_num):
+    def __init__(self,emb_matrix,max_len,class_num,hidden_num):
         super().__init__()
         self.emb_num = emb_matrix.weight.shape[1] # 词的维度
-        self.block1 = Block(2,self.emb_num,max_len)# 2*5的卷->6*1
-        self.block2 = Block(3,self.emb_num,max_len)# 3*5的卷->5*1
-        self.block3 = Block(4,self.emb_num,max_len)# 4*5的卷->4*1
+        # block的个数也可以作为超参数
+        self.block1 = Block(2,self.emb_num,max_len,hidden_num)# 2*5的卷->6*1
+        self.block2 = Block(3,self.emb_num,max_len,hidden_num)# 3*5的卷->5*1
+        self.block3 = Block(4,self.emb_num,max_len,hidden_num)# 4*5的卷->4*1
+        self.block4 = Block(5, self.emb_num, max_len, hidden_num)  # 4*5的卷->4*1
 
         self.emb_matrix = emb_matrix
 
-        self.classifier = nn.Linear(6,class_num)
+        self.classifier = nn.Linear(hidden_num * 4,class_num) # 2 * 3
         self.loss_fun = nn.CrossEntropyLoss()
 
     def forward(self,batch_idx,batch_label=None):
@@ -150,9 +154,10 @@ class TextCNNModel(nn.Module):
         b1_result = self.block1.forward(batch_emb)
         b2_result = self.block2.forward(batch_emb)
         b3_result = self.block3.forward(batch_emb)
+        b4_result = self.block4.forward(batch_emb)
 
         # 最大池化拼接用于最后分类
-        feature = torch.cat([b1_result,b2_result,b3_result],dim=1) # 1 * 6 : [ batch * ( 3 * 2 ) ]
+        feature = torch.cat([b1_result,b2_result,b3_result,b4_result],dim=1) # 1 * 6 : [ batch * ( 3 * 2 ) ]
         pre = self.classifier(feature)
 
         if batch_label is not None:
@@ -163,22 +168,23 @@ class TextCNNModel(nn.Module):
             return torch.argmax(pre,dim=-1)
 
 if __name__ == "__main__":
-    texts,labels = read_data(data_path,3000)
+    data_path = "comment.csv"
+
+    texts,labels = read_data(data_path)
 
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, shuffle=True)
-
-    print("Before undersampling: ", Counter(y_train))
 
     # 分别输出训练集的 X, y形状， 测试集的X, y的形状
     print(X_train[:5])
     print(y_train[:5])
 
-    embedding = 5
-    max_len = 7
-    batch_size = 1
-    epoch = 10
-    lr = 0.001
+    embedding = 20 # 超参数，一个字的表示维度
+    max_len = 20 # 超参数，一个句子最大字数
+    batch_size = 10 # 超参数，一次处理多少个句子
+    epoch = 30 # 迭代次数
+    lr = 0.001 # 学习率
+    hidden_num = 2 # 超参数，一个block最大池化出的个数
     class_num = len(set(y_train))
     # 使用GPU训练模型
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -187,16 +193,22 @@ if __name__ == "__main__":
     # words_embedding：所有数字对应的向量
     word_2_index,words_embedding = build_curpus(X_train,embedding)
 
+    # 训练集数据
     train_dataset = TextDataset(X_train,y_train,word_2_index,max_len)
     # DataLoader用于多线程地读取数据，提取到一批数据后，就可以将其输入到网络中进行训练或推理
     # 需要使用自定义Dataset，并且至少应包含__init__、__len__和__getitem__这三个函数。其中，__init__用于传入数据，__len__返回数据集的大小（即item的数量），而__getitem__则用于返回一条训练数据，并将其转换为tensor
     train_loader = DataLoader(train_dataset,batch_size,shuffle=False)
 
-    model = TextCNNModel(words_embedding,max_len,class_num).to(device)
+    # 测试集数据
+    test_dataset = TextDataset(X_test,y_test,word_2_index,max_len)
+    test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
+
+    model = TextCNNModel(words_embedding,max_len,class_num,hidden_num).to(device)
     # 优化器
     opt = torch.optim.AdamW(model.parameters(),lr=lr)
 
     for e in range(epoch):
+        # 训练模型
         for batch_idx,batch_label in train_loader:
             batch_idx = batch_idx.to(device)
             batch_label = batch_label.to(device)
@@ -204,5 +216,26 @@ if __name__ == "__main__":
             loss.backward()
             opt.step()
             opt.zero_grad()
-            print(f"loss:{loss:.3f}")
+            #print(f"loss:{loss:.3f}")
+        print(f"loss:{loss:.3f}")
+
+        # 看模型效果
+        right_num = 0
+        for batch_idx,batch_label in test_loader:
+            batch_idx = batch_idx.to(device)
+            batch_label = batch_label.to(device)
+            pre = model.forward(batch_idx)
+            right_num += int(torch.sum(pre==batch_label))
+        print(right_num)
+
+        # best 0.828
+        # embedding = 20 max_len = 20 batch_size = 10 epoch = 10 size = 0.2 hidden_num = 2
+        print(f"acc = {right_num/len(X_test)*100:.2f}%")
+
+    # 保存模型
+    torch.save(model, 'textCNN.pt')
+
+
+
+
 
