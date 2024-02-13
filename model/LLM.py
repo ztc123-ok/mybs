@@ -5,21 +5,34 @@ from get_user_agent import get_user_agent_of_pc
 import requests
 from lxml import etree
 import pymysql
-erniebot.api_type = 'aistudio'
-erniebot.access_token = 'c2610a49f190eb3839deea2b1bef8ea5ea1fa39e'
+import time
+import random
+import pandas as pd
 
-response = erniebot.ChatCompletion.create(
+erniebot.api_type = 'aistudio'
+erniebot.access_token = ''
+data = pd.read_csv("./comment.csv", usecols=['content', 'rating'])
+data = data.values # 评论文本数据 类别数据（好评/差评）
+
+right_num = 0
+
+for comment in data:
+    time.sleep(1 + random.random())
+    response = erniebot.ChatCompletion.create(
+
     model='ernie-3.5',
     messages=[{
+        "task_prompt": "SentimentClassification",
         'role': 'user',
-        'content': "请问你是谁？"
-    }, {
-        'role': 'assistant',
-        'content':
-        "我是百度公司开发的人工智能语言模型，我的中文名是文心一言，英文名是ERNIE-Bot，可以协助您完成范围广泛的任务并提供有关各种主题的信息，比如回答问题，提供定义和解释及建议。如果您有任何问题，请随时向我提问。"
-    }, {
-        'role': 'user',
-        'content': "我在深圳，周末可以去哪里玩？"
+        'content': "判断是好评还是差评？0代表差评，1代表好评,你只能回答0或1\n\"{}\"".format(comment[0])
     }])
 
-print(response.get_result())
+    print(response.get_result())
+    if comment[1] == '差评' and '0' in response.get_result():
+        right_num = right_num + 1
+        print(right_num)
+    if comment[1] == '好评' and '1' in response.get_result():
+        right_num = right_num + 1
+        print(right_num)
+print(f"acc = {right_num / len(comment) * 100:.2f}%")
+
