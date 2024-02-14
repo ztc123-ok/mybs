@@ -1,11 +1,9 @@
-import json
+import pymysql
 
-my_dict = {'Apple': 4, 'Banana': 2, 'Orange': 6, 'Grapes': 11}
-# 保存文件
-tf = open("myDictionary.json", "w")
-json.dump(my_dict, tf)
-tf.close()
-# 读取文件
-tf = open("myDictionary.json", "r")
-new_dict = json.load(tf)
-print(new_dict)
+connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
+                          charset="utf8")
+cursor = connect.cursor()
+sql = "select id from xc_sight"
+cursor.execute(sql)
+results = [row[0] for row in cursor.fetchall()]
+print(list(results))

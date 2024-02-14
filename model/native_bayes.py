@@ -23,6 +23,7 @@ def clean(list,restr=''):
         list = list.replace(' ',restr)
         list = list.replace('\n',restr)
         list = list.replace('\\', restr)
+        list = list.replace(',', restr)
     else:
         for i in range(len(list)):
             list[i] = co.sub(restr, list[i])
@@ -32,6 +33,7 @@ def clean(list,restr=''):
             list[i] = list[i].replace(' ',restr)
             list[i] = list[i].replace('\n',restr)
             list[i] = list[i].replace('\\', restr)
+            list[i] = list[i].replace(',', restr)
 
     return list
 
@@ -191,4 +193,5 @@ with open("dictionary.csv", "a", encoding='utf-8') as f:
         f.writelines(dictionary[i] + "," + str(good_vec_trained[i]) + "," + str(bad_vec_trained[i]) + "\n")
 
 print('朴素贝叶斯模型(bayes)预测的准确度: {}'.format(success_count / len(X_test)))
-# best: 0.6657113378424854
+# best: 0.66
+# 实际应用大概 0.75

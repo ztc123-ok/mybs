@@ -28,6 +28,7 @@ def clean(list,restr=''):
         list = list.replace(' ',restr)
         list = list.replace('\n',restr)
         list = list.replace('\\', restr)
+        list = list.replace(',', restr)
     else:
         for i in range(len(list)):
             list[i] = co.sub(restr, list[i])
@@ -37,6 +38,7 @@ def clean(list,restr=''):
             list[i] = list[i].replace(' ',restr)
             list[i] = list[i].replace('\n',restr)
             list[i] = list[i].replace('\\', restr)
+            list[i] = list[i].replace(',', restr)
 
     return list
 
@@ -147,7 +149,8 @@ class TextCNNModel(nn.Module):
         self.emb_matrix = emb_matrix
 
         self.classifier = nn.Linear(hidden_num * 4,class_num) # 2 * 3
-        self.loss_fun = nn.CrossEntropyLoss()
+        self.weight = torch.tensor([1,1],dtype=torch.float) # 差评，好评
+        self.loss_fun = nn.CrossEntropyLoss(weight=self.weight)
 
     def forward(self,batch_idx,batch_label=None):
         batch_emb = self.emb_matrix(batch_idx)
@@ -168,9 +171,9 @@ class TextCNNModel(nn.Module):
             return torch.argmax(pre,dim=-1)
 
 if __name__ == "__main__":
-    data_path = "comment.csv"
+    data_path = "t_comment_detail.csv"
 
-    texts,labels = read_data(data_path)
+    texts,labels = read_data(data_path,3000)
 
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, shuffle=True)

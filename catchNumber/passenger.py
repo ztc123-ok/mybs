@@ -47,9 +47,9 @@ def get_passenger(url):
     #拥堵类型    畅通
     traffic_type = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[5]/span/b/text()")
     #拥堵里程    0.33（公里）
-    traffic_mileage = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[7]/text()")
+    traffic_mileage = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[8]/text()")
     #平均时速    37.09（km/h）
-    average_speed = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[8]/text()")
+    average_speed = html_tree.xpath("//*[@class='tab']/table/tbody/tr/td[7]/text()")
     # time.strftime("%Y-%m-%d", time.localtime())
 
     # print(sight_name)

@@ -1,14 +1,11 @@
 import pandas as pd
 import numpy as np
-import torch
-from torch.utils.data import Dataset,DataLoader
-from tqdm import tqdm
-from collections import Counter
-import torch.nn as nn
-import re
-import emoji
 import jieba
-import json
+from sklearn.model_selection import train_test_split
+import emoji
+import re
+import csv
+from collections import Counter
 
 def clean(list,restr=''):
     # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
@@ -39,7 +36,6 @@ def clean(list,restr=''):
 
     return list
 
-# 读取数据
 def read_data(data_path,num = None):
     data = pd.read_csv(data_path, usecols=['content', 'rating'])
     data = data.values  # 评论文本数据 类别数据（好评/差评）
@@ -68,63 +64,73 @@ def read_data(data_path,num = None):
         texts.append(words)
         if comment[1] == '好评':
             comment[1] = '1'
-        elif comment[1] == '中评':
-            comment[1] = '0'
         elif comment[1] == '差评':
             comment[1] = '0'
         labels.append(comment[1])
 
     return texts,labels
 
-class TextDataset(Dataset):
-    def __init__(self,all_text,all_label,word_2_index,max_len):
-        self.all_text = all_text
-        self.all_label = all_label
-        self.word_2_index = word_2_index
-        self.max_len = max_len
-    def __getitem__(self,index):
-        text = self.all_text[index][:self.max_len]
-        label = int(self.all_label[index])
+texts,labels = read_data("./test.csv")
 
-        # 获取字索引，将句子转换成索引表
-        text_idx = [self.word_2_index.get(i,1) for i in text]
-        # 不够填充
-        text_idx = text_idx + [0] * (self.max_len - len(text_idx))
-        # 构建数据集
-        text_idx = torch.tensor(text_idx).unsqueeze(dim=0) #增加一个维度
+good_vec_trained = []
+bad_vec_trained = []
+dictionary = []
 
-        text_idx = torch.tensor(text_idx)
-        return text_idx,label
-    def __len__(self):
-        return len(self.all_text)
+with open('dictionary.csv', 'r',encoding='utf-8') as file:
+    reader = csv.reader(file)
+    good_pro = float(next(reader, None)[1])
+    for row in reader:
+        # 提取需要的两列数据
+        dictionary.append(row[0])
+        good_vec_trained.append(float(row[1]))
+        bad_vec_trained.append(float(row[2]))
 
-if __name__ == "__main__":
-    # 测试所保存的模型
-    #data_path = "comment.csv"
-    data_path = "bad.csv"
-    texts,labels = read_data(data_path)
+good_vec_trained = np.array(good_vec_trained)
+bad_vec_trained = np.array(bad_vec_trained)
+X = []  # 存放向量化后的评论
 
-    max_len = 20  # 超参数，一个句子最大字数
-    batch_size = 10  # 超参数，一次处理多少个句子
-    # 使用GPU 预测
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+for sentence in texts:
 
-    tf = open("word_2_index.json", "r")
-    word_2_index = json.load(tf)
-    tf.close()
-    #print(word_2_index)
-    test_dataset = TextDataset(texts,labels,word_2_index,max_len)
-    test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
+    # 首先将每个评论分词列表设置为 (1,5023)的向量，每个向量值为1
+    # 一个句子转化为一个向量
+    word_2_vec = np.zeros(len(dictionary))
 
-    from textCNN import TextCNNModel,Block
-    model = torch.load('textCNN.pt').to(device)
-    right_num = 0
-    for batch_idx, batch_label in test_loader:
-        batch_idx = batch_idx.to(device)
-        batch_label = batch_label.to(device)
-        pre = model.forward(batch_idx)
-        print(pre)
-        right_num += int(torch.sum(pre == batch_label))
+    # 遍历字典，将所有评论分词列表 转化为 向量列表
+    for word in sentence:
 
-    print(right_num)
-    print(f"acc = {right_num / len(texts) * 100:.2f}%")
+        # 如果word存在于字典中
+        if word in dictionary:
+            # 找到该词在字典中的位置
+            loc = dictionary.index(word)
+
+            # 此句子对照向量的该位置加1
+            word_2_vec[loc] += 1
+
+            # X，即输入句子的特征向量列表，追加新句子向量
+    X.append(word_2_vec)
+
+
+success_count = 0
+
+print(good_vec_trained)
+for i in range(len(X)):
+
+    # 代入朴素贝叶斯公式
+
+    # 评论好评的概率
+    good_pro_pre = np.sum(X[i] * good_vec_trained) + np.log(good_pro)
+
+    # 评论差评的概率
+    bad_pro_pre = np.sum(X[i] * bad_vec_trained) + np.log(1 - good_pro)
+
+    # 若好评概率大于差评概率
+    if good_pro_pre > bad_pro_pre:
+        result = 1  # 输出好评
+
+    else:
+        result = 0  # 否则输出差评
+    if (labels[i] == result):  # 若预测答案与真实答案相等，预测正确数量增加
+        success_count += 1
+    print(result,labels[i])
+
+print('朴素贝叶斯模型(bayes)预测的准确度: {}'.format(success_count / len(X)))
