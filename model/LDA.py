@@ -98,7 +98,7 @@ def keep_noun_split_words(text):
             word_list.append(seg_word.word)
     return ' '.join(word_list)
 
-texts,texts_timesort = read_data("6")
+texts,texts_timesort = read_data("7")
 texts = texts_timesort+texts
 
 data = pd.DataFrame({
