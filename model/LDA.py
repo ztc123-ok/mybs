@@ -42,8 +42,8 @@ def read_data(sight_id):
                                            charset="utf8")
     cursor = connect.cursor()
 
-    get_comments = "SELECT comments FROM xc_comments where sight_id = {}".format(id)
-    get_comments_timesort = "SELECT comments FROM xc_comments_timesort where sight_id = {}".format(id)
+    get_comments = "SELECT comments FROM xc_comments where sight_id = {}".format(sight_id)
+    get_comments_timesort = "SELECT comments FROM xc_comments_timesort where sight_id = {}".format(sight_id)
 
     cursor.execute(get_comments)
     comments = [row[0] for row in cursor.fetchall()]
@@ -71,6 +71,7 @@ def read_data(sight_id):
             # 若切出来的词语 不属于停用词表， 加入词组中
             if word not in stop:
                 words.append(word)
+        words = ''.join(words)
         texts.append(words)
     for comment in comments_timesort:
         words = []  # 存放切词后、去除停用词后的句子词组
@@ -79,6 +80,7 @@ def read_data(sight_id):
             # 若切出来的词语 不属于停用词表， 加入词组中
             if word not in stop:
                 words.append(word)
+        words = ''.join(words)
         texts_timesort.append(words)
 
     cursor.close()
@@ -86,36 +88,30 @@ def read_data(sight_id):
 
     return texts,texts_timesort
 
-pwd_path = r'2021-test/'
-
-fileList = os.listdir(pwd_path)
-
 def keep_noun_split_words(text):
     seg_list = psg.cut(text)
-    flag_list = ['n', 'nz', 'vn']
+    #flag_list = ['n','an','v','a','b','nr','vn']
+    flag_list = ['n', 'v', 'a']
     word_list = []
     for seg_word in seg_list:
         if seg_word.flag in flag_list and len(seg_word.word) > 1:
             word_list.append(seg_word.word)
     return ' '.join(word_list)
 
+texts,texts_timesort = read_data("6")
+texts = texts_timesort+texts
 
-df = pd.DataFrame(fileList)
-df.columns = ['file']
+data = pd.DataFrame({
+    'content': texts # 实际的评论文本
+})
 
-for line in range(len(df)):
-    fileNM = df.loc[line, 'file']
-    with open(pwd_path + fileNM, 'r', encoding='utf-8') as file:
-        df.loc[line, 'text'] = file.read()
-
-df['content'] = df['text'].apply(del_stopwords_keep_charactersCN).apply(keep_noun_split_words)
-
-a = df['content'].tolist()
+data["content_cutted"] = data.content.apply(keep_noun_split_words)
 
 tf_vectorizer = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
-tf = tf_vectorizer.fit_transform(a)
+tf = tf_vectorizer.fit_transform(data["content_cutted"].tolist())
 
-lda = LatentDirichletAllocation(n_components=10, max_iter=50, learning_method='batch', random_state=12345)
+# 看下来2个效果比较好，一个是景点特色，一个是游客感受
+lda = LatentDirichletAllocation(n_components=2, max_iter=60, learning_method='batch', random_state=12345)
 lda.fit(tf)
 
 def print_top_words(model, feature_names, n_top_words):
@@ -127,7 +123,7 @@ def print_top_words(model, feature_names, n_top_words):
         print(topic_w)
     return tword
 
-print_top_words(lda, tf_vectorizer.get_feature_names(), 5)
+print_top_words(lda, tf_vectorizer.get_feature_names_out(), 8)
 
 def get_id():
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
@@ -140,13 +136,13 @@ def get_id():
     cursor.close()
     connect.close()
     return  list_id
-if __name__ == "__main__":
-    sight_id = 2
-
-    if sight_id == None:
-        list_id = get_id()
-    else:
-        list_id = [sight_id]
-
-    for id in list_id:
-        texts, texts_timesort = read_data(id)
+# if __name__ == "__main__":
+#     sight_id = 2
+#
+#     if sight_id == None:
+#         list_id = get_id()
+#     else:
+#         list_id = [sight_id]
+#
+#     for id in list_id:
+#         texts, texts_timesort = read_data(id)
