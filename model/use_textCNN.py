@@ -101,7 +101,7 @@ class TextDataset(Dataset):
 if __name__ == "__main__":
     # 测试所保存的模型
     #data_path = "comment.csv"
-    data_path = "bad.csv"
+    data_path = "test.csv"
     texts,labels = read_data(data_path)
 
     max_len = 20  # 超参数，一个句子最大字数
@@ -111,6 +111,7 @@ if __name__ == "__main__":
 
     tf = open("word_2_index.json", "r")
     word_2_index = json.load(tf)
+    print(len(word_2_index))
     tf.close()
     #print(word_2_index)
     test_dataset = TextDataset(texts,labels,word_2_index,max_len)
@@ -127,4 +128,5 @@ if __name__ == "__main__":
         right_num += int(torch.sum(pre == batch_label))
 
     print(right_num)
+    # 实际应用 差评0.95 好评 0.83
     print(f"acc = {right_num / len(texts) * 100:.2f}%")

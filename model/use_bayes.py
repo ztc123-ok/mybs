@@ -125,12 +125,13 @@ for i in range(len(X)):
 
     # 若好评概率大于差评概率
     if good_pro_pre > bad_pro_pre:
-        result = 1  # 输出好评
+        result = '1'  # 输出好评
 
     else:
-        result = 0  # 否则输出差评
+        result = '0'  # 否则输出差评
     if (labels[i] == result):  # 若预测答案与真实答案相等，预测正确数量增加
         success_count += 1
     print(result,labels[i])
 
+# 实际应用 差评0.86 好评
 print('朴素贝叶斯模型(bayes)预测的准确度: {}'.format(success_count / len(X)))

@@ -28,21 +28,29 @@ def get_chrome(chrome_path):
     chrome.maximize_window()
     return chrome
 
-def get_url(url,page):
-    print("正在获取差评。。。",url)
+def get_url(url,page,mytype):
+    print("正在获取{}。。。".format(mytype),url)
+    if mytype == "好评":
+        type_id = "2"
+        mypath = "good.csv"
+    elif mytype == "差评":
+        type_id = "4"
+        mypath = "bad.csv"
+
     chrome = get_chrome(chrome_path)
     # https://you.ctrip.com/sight/beijing1/s0-p2.html#sightname
 
     chrome.get(url)
-    time.sleep(3 + random.random())
+    time.sleep(5 + random.random())
 
-    # bad_button = chrome.find_element(by=By.XPATH,
-    #                                   value="//*[@id='dpType']/div[@typeid='4']/i")
-    # bad_button.click()
-    WebDriverWait(chrome, timeout=10).until(
-         EC.presence_of_element_located(
-             (By.XPATH, "//*[@id='dpType']/div[@typeid='4']/i"))).click()
-    print("已点击差评")
+    # 好评 2  差评 4
+    bad_button = chrome.find_element(by=By.XPATH,
+                                      value="//*[@id='dpType']/div[@typeid='{}']/i".format(type_id))
+    bad_button.click()
+    # WebDriverWait(chrome, timeout=10).until(
+    #      EC.presence_of_element_located(
+    #          (By.XPATH, "//*[@id='dpType']/div[@typeid='4']/i"))).click()
+    print("已点击",mytype)
     time.sleep(3 + random.random())
     for i in range(page):
         print("page: ",i)
@@ -52,13 +60,14 @@ def get_url(url,page):
             "//*[@id='dp-con']/div[@class='info_list mtop']//p[@class='dpdetail']/text() | //*[@id='dp-con']/div[@class='info_list mtop']//p[@class='dpdetail']/b/text()")
         #print(comments)
 
-        with open('bad.csv', 'a', newline='',encoding='utf-8') as csvfile:
+        with open(mypath, 'a', newline='',encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
 
             # 遍历数据并写入
             for co in comments:
                 co = clean(co)
-                row = [co,"差评"]
+                row = [co,mytype]
+                #row = [co, "差评"]
                 writer.writerow(row)
         try:
             next_button = chrome.find_element(by=By.XPATH,
@@ -110,7 +119,7 @@ def catch_url(url):
             "//*[@id='sceneryListInfo']/div//div[@class='s_info']/a/@href")
         #print(comments)
 
-        with open('bad_url.csv', 'a', newline='',encoding='utf-8') as csvfile:
+        with open('bad_url.csv', 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
 
             # 遍历数据并写入
@@ -130,11 +139,16 @@ def catch_url(url):
 import argparse
 
 if __name__ == "__main__":
-    url = "https://so.ly.com/scenery?q=%E6%9D%AD%E5%B7%9E"
-    page = 100
+    url = "https://so.ly.com/scenery?q=%E5%8C%97%E4%BA%AC&c=0&classify=0&grade="
+    page = 20
+    mytype = "差评"
     #catch_url(url)
     with open('bad_url.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
+        i = 0
         for row in reader:
-            get_url(row[0],page)
-    #get_url(url,page)
+            i = i + 1
+            # if i <= 1:
+            #     continue
+            get_url(row[0],page,mytype)
+    # get_url(url,page)

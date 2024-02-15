@@ -144,23 +144,24 @@ class TextCNNModel(nn.Module):
         self.block1 = Block(2,self.emb_num,max_len,hidden_num)# 2*5的卷->6*1
         self.block2 = Block(3,self.emb_num,max_len,hidden_num)# 3*5的卷->5*1
         self.block3 = Block(4,self.emb_num,max_len,hidden_num)# 4*5的卷->4*1
-        self.block4 = Block(5, self.emb_num, max_len, hidden_num)  # 4*5的卷->4*1
+        #self.block4 = Block(5, self.emb_num, max_len, hidden_num)  # 4*5的卷->4*1
 
         self.emb_matrix = emb_matrix
 
-        self.classifier = nn.Linear(hidden_num * 4,class_num) # 2 * 3
-        self.weight = torch.tensor([1,1],dtype=torch.float) # 差评，好评
+        self.classifier = nn.Linear(hidden_num * 3,class_num) # 2 * 3
+        self.weight = torch.tensor([1,2],dtype=torch.float) # 差评，好评
         self.loss_fun = nn.CrossEntropyLoss(weight=self.weight)
+        # self.loss_fun = nn.CrossEntropyLoss()
 
     def forward(self,batch_idx,batch_label=None):
         batch_emb = self.emb_matrix(batch_idx)
         b1_result = self.block1.forward(batch_emb)
         b2_result = self.block2.forward(batch_emb)
         b3_result = self.block3.forward(batch_emb)
-        b4_result = self.block4.forward(batch_emb)
+        #b4_result = self.block4.forward(batch_emb)
 
         # 最大池化拼接用于最后分类
-        feature = torch.cat([b1_result,b2_result,b3_result,b4_result],dim=1) # 1 * 6 : [ batch * ( 3 * 2 ) ]
+        feature = torch.cat([b1_result,b2_result,b3_result],dim=1) # 1 * 6 : [ batch * ( 3 * 2 ) ]
         pre = self.classifier(feature)
 
         if batch_label is not None:
@@ -171,12 +172,19 @@ class TextCNNModel(nn.Module):
             return torch.argmax(pre,dim=-1)
 
 if __name__ == "__main__":
-    data_path = "t_comment_detail.csv"
+    data_path = "comment.csv"
 
-    texts,labels = read_data(data_path,3000)
+    texts,labels = read_data(data_path)
 
     from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.10, shuffle=True)
+    print("占比情况",Counter(y_train))
+    # data_path = "test.csv"
+    # from use_textCNN import read_data
+    # t,l = read_data(data_path)
+    #
+    # X_test =  t
+    # y_test =  l
 
     # 分别输出训练集的 X, y形状， 测试集的X, y的形状
     print(X_train[:5])
@@ -185,7 +193,7 @@ if __name__ == "__main__":
     embedding = 20 # 超参数，一个字的表示维度
     max_len = 20 # 超参数，一个句子最大字数
     batch_size = 10 # 超参数，一次处理多少个句子
-    epoch = 30 # 迭代次数
+    epoch = 15 # 迭代次数
     lr = 0.001 # 学习率
     hidden_num = 2 # 超参数，一个block最大池化出的个数
     class_num = len(set(y_train))
