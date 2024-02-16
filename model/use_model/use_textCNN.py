@@ -46,15 +46,15 @@ def read_data(sight_id,num = None):
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",charset="utf8")
     cursor = connect.cursor()
 
-    sql = "select comments from xc_comments_timesort where sight_id = {}".format(sight_id)
+    sql = "select id,comments from xc_comments where sight_id = {}".format(sight_id)
     cursor.execute(sql)
     rest = cursor.fetchall()
-    data = [row[0] for row in rest]
+    data = [row[1] for row in rest]
+    labels = [row[0] for row in rest]  # 记录评论id
     cursor.close()
     connect.close()
 
     texts = [] #评论
-    labels = [] #类别
     stop = [] #停用词表
 
     file_stop = '../stopwords//hit_stopwords.txt'  # 停用词表
@@ -73,7 +73,6 @@ def read_data(sight_id,num = None):
             # 若切出来的词语 不属于停用词表， 加入词组中
             if word not in stop:
                 words.append(word)
-        labels.append("1")
         texts.append(words)
     return texts,labels
 
@@ -99,9 +98,23 @@ class TextDataset(Dataset):
     def __len__(self):
         return len(self.all_text)
 
+def update_possitive(id,type):
+    connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
+                                           charset="utf8")
+    cursor = connect.cursor()
+    update_topic = "UPDATE xc_comments SET positive = '{}' where id = {}".format(type,id)
+    cursor.execute(update_topic)
+    connect.commit()
+
+    cursor.close()
+    connect.close()
+
+
 if __name__ == "__main__":
     # 测试所保存的模型
     #data_path = "comment.csv"
+
+    # 当前评论选取的数据库是 xc_comments <<<-------------------------------
     sight_id = '2'
     texts,labels = read_data(sight_id)
     print(len(texts))
@@ -127,14 +140,17 @@ if __name__ == "__main__":
             batch_label = batch_label.to(device)
             pre = model.forward(batch_idx)
             data_list = pre.tolist()
-            print(pre)
-            for item in data_list:
+            batch_label = batch_label.tolist()
+            #print(pre)
+            print(batch_label)
+            for id,item in zip(batch_label,data_list):
                 writer.writerow([item])
-        # data_list = pre.tolist()
-        #
-        # # 写入CSV文件
-        # with open('pre_textCNN.csv', 'w', newline='',encoding="utf-8") as file:
-        #     writer = csv.writer(file)
-        #     for item in data_list:
-        #         # 每个元素一行
-        #         writer.writerow([item])
+                if int(item) == 1:
+                    type = "好评"
+                    #print("好评")
+                elif int(item) == 0:
+                    type = "差评"
+                    #print("差评")
+                # 这里一个个更新卡的很慢
+                update_possitive(id,type)
+

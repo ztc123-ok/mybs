@@ -7,6 +7,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import emoji
 import pymysql
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 def clean(list,restr=''):
     # 过滤表情,我还得专门下个emoji的库可还行，数据库字段设utf8mb4好像也行,字段里含有‘和“写sql也会错
@@ -90,29 +92,90 @@ def read_data(sight_id):
 
 def keep_noun_split_words(text):
     seg_list = psg.cut(text)
+    # 词性筛选
     #flag_list = ['n','an','v','a','b','nr','vn']
-    flag_list = ['n', 'v', 'a']
+    #flag_list = ['n', 'v', 'a']
+    flag_list = ['n'] # 景点特色
     word_list = []
     for seg_word in seg_list:
         if seg_word.flag in flag_list and len(seg_word.word) > 1:
             word_list.append(seg_word.word)
     return ' '.join(word_list)
 
-texts,texts_timesort = read_data("7")
-texts = texts_timesort+texts
+def keep_adj_split_words(text):
+    seg_list = psg.cut(text)
+    # 词性筛选
+    #flag_list = ['n','an','v','a','b','nr','vn']
+    #flag_list = ['n', 'v', 'a']
+    flag_list = ['a','v'] # 游客感受
+    word_list = []
+    for seg_word in seg_list:
+        if seg_word.flag in flag_list and len(seg_word.word) > 1:
+            word_list.append(seg_word.word)
+    return ' '.join(word_list)
 
-data = pd.DataFrame({
-    'content': texts # 实际的评论文本
-})
+def get_pic_words(texts,sight_id):
 
-data["content_cutted"] = data.content.apply(keep_noun_split_words)
+    flag_list = ['n','an','v','a','b','nr','vn']
+    word_list = {}
+    for words in texts:
+        seg_list = psg.cut(words)
+        for seg_word in seg_list:
+            if seg_word.flag in flag_list and len(seg_word.word) > 1:
+                word_list[seg_word.word] = word_list.get(seg_word.word, 0) + 1
 
-tf_vectorizer = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
-tf = tf_vectorizer.fit_transform(data["content_cutted"].tolist())
+    # 以下部分需在系统中展示，这里是测试演示，系统展示本部分需要删除
 
-# 看下来2个效果比较好，一个是景点特色，一个是游客感受
-lda = LatentDirichletAllocation(n_components=2, max_iter=60, learning_method='batch', random_state=12345)
-lda.fit(tf)
+    # 按词频从高到低排序
+    counts = sorted(word_list.items(), key=lambda x: x[1], reverse=True)
+    # 输出前10个
+    for i in range(10):
+        word, count = counts[i]
+        print('{:<10}{:>5}'.format(word, count))
+    # 绘制柱状图
+    x_word = []
+    y_count = []
+    for i in range(10):
+        word, count = counts[i]
+        x_word.append(word)
+        y_count.append(count)
+    # 设置显示中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    # 设置图片大小
+    plt.figure(figsize=(20, 15))
+    plt.bar(range(len(y_count)), y_count, color='r', tick_label=x_word, facecolor='#9999ff', edgecolor='white')
+    # 这里是调节横坐标的倾斜度，rotation是度数，以及设置刻度字体大小
+    plt.xticks(rotation=45, fontsize=20)
+    plt.yticks(fontsize=20)
+    # plt.legend()
+    plt.title("景点 {} 评论词频统计".format(sight_id), fontsize=24)
+    plt.savefig('bar_result_{}.jpg'.format(sight_id))
+    #plt.show()
+    # counts[('不错',1422),('值得',766)...]
+    return counts
+
+
+# 绘制词云图
+def drawcloud(texts,sight_id):
+    strs = ""
+    flag_list = ['n', 'an', 'v', 'a', 'b', 'nr', 'vn']
+    for words in texts:
+        seg_list = psg.cut(words)
+        for seg_word in seg_list:
+            if seg_word.flag in flag_list and len(seg_word.word) > 1:
+                strs = strs + " " + seg_word.word
+    # 生成对象
+    wc = WordCloud(font_path="msyh.ttc",
+                             width=1000,
+                             height=700,
+                             background_color='white',
+                             max_words=100).generate(strs)
+    # 显示词云图
+    plt.imshow(wc, interpolation="bilinear")
+    plt.axis("off")
+    #plt.show()
+    # 保存文件
+    wc.to_file("WordCloud_{}.png".format(sight_id))
 
 def print_top_words(model, feature_names, n_top_words):
     tword = []
@@ -123,7 +186,6 @@ def print_top_words(model, feature_names, n_top_words):
         print(topic_w)
     return tword
 
-print_top_words(lda, tf_vectorizer.get_feature_names_out(), 8)
 
 def get_id():
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
@@ -135,14 +197,55 @@ def get_id():
 
     cursor.close()
     connect.close()
-    return  list_id
-# if __name__ == "__main__":
-#     sight_id = 2
-#
-#     if sight_id == None:
-#         list_id = get_id()
-#     else:
-#         list_id = [sight_id]
-#
-#     for id in list_id:
-#         texts, texts_timesort = read_data(id)
+    return list_id
+
+def save_topic(tword,sight_id):
+    topics = ";".join(tword)
+    connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
+                                           charset="utf8")
+    cursor = connect.cursor()
+    update_topic = "UPDATE xc_sight SET topic = '{}' where id = {}".format(topics,sight_id)
+    cursor.execute(update_topic)
+    connect.commit()
+
+    cursor.close()
+    connect.close()
+
+if __name__ == "__main__":
+    sight_id = 5
+
+    if sight_id == None:
+        list_id = get_id()
+    else:
+        list_id = [sight_id]
+
+    for id in list_id:
+        texts, texts_timesort = read_data(id)
+
+        texts = texts_timesort + texts
+
+        data = pd.DataFrame({
+            'content': texts  # 实际的评论文本
+        })
+        # 词频统计
+        word_list = get_pic_words(texts,sight_id)
+        # 绘制词云图
+        drawcloud(texts,sight_id)
+
+        data["content_noun"] = data.content.apply(keep_noun_split_words)
+        data["content_adj"] = data.content.apply(keep_adj_split_words)
+
+        tf_vectorizer_noun = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
+        tf_vectorizer_adj = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
+        tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
+        tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
+
+        # 看下来2个效果比较好，一个是景点特色，一个是游客感受
+        lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
+        lda.fit(tf_noun)
+        # 景点特色
+        tword = print_top_words(lda, tf_vectorizer_noun.get_feature_names_out(), 8)
+        lda.fit(tf_adj)
+        # 游客感受
+        tword = tword + print_top_words(lda, tf_vectorizer_adj.get_feature_names_out(), 8)
+        save_topic(tword,id)
