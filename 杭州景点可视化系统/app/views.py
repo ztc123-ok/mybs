@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from app.models import User
 from django.http import HttpResponse
-from app.utils import errorResponse
+from app.utils import errorResponse,getHomeData
 import time
 def login(request):
     if request.method == 'GET':
@@ -43,6 +43,14 @@ def logOut(request):
 def home(request):
     username = request.session.get('username')
     userInfo = User.objects.get(username=username)
+    sightNumber,commentsLenMax,commentsName,heatScoreMax,heatScoreName = getHomeData.getHomeTagData()
+    hotTop10Data = getHomeData.getSortData()
     return render(request,'home.html',{
-        'userInfo':userInfo
+        'userInfo':userInfo,
+        'sightNumber':sightNumber,
+        'commentsLenMax':commentsLenMax,
+        'commentsName':commentsName,
+        'heatScoreName':heatScoreName,
+        'heatScoreMax':heatScoreMax,
+        'hotTop10Data':hotTop10Data,
     })
