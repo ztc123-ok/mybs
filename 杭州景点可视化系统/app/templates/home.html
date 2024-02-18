@@ -324,14 +324,19 @@
 
   <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>首页</h1>
-      <nav>
+    <div class="pagetitle" style="display: flex;align-items: center">
+      <div style="margin-right: auto">
+        <h1>首页</h1>
+        <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{% url 'home' %}">主页</a></li>
           <li class="breadcrumb-item active">首页</li>
         </ol>
       </nav>
+      </div>
+      <h5>
+        {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+      </h5>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
@@ -416,64 +421,11 @@
 
 
                 <div class="card-body">
-                  <h5 class="card-title">Reports <span>/Today</span></h5>
+                  <h5 class="card-title">热门景点地图</h5>
 
                   <!-- Line Chart -->
-                  <div id="reportsChart"></div>
+                  <div id="mains" style="width:100%;height:450px"></div>
 
-                  <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new ApexCharts(document.querySelector("#reportsChart"), {
-                        series: [{
-                          name: 'Sales',
-                          data: [31, 40, 28, 51, 42, 82, 56],
-                        }, {
-                          name: 'Revenue',
-                          data: [11, 32, 45, 32, 34, 52, 41]
-                        }, {
-                          name: 'Customers',
-                          data: [15, 11, 32, 18, 9, 24, 11]
-                        }],
-                        chart: {
-                          height: 350,
-                          type: 'area',
-                          toolbar: {
-                            show: false
-                          },
-                        },
-                        markers: {
-                          size: 4
-                        },
-                        colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                        fill: {
-                          type: "gradient",
-                          gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.4,
-                            stops: [0, 90, 100]
-                          }
-                        },
-                        dataLabels: {
-                          enabled: false
-                        },
-                        stroke: {
-                          curve: 'smooth',
-                          width: 2
-                        },
-                        xaxis: {
-                          type: 'datetime',
-                          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-                        },
-                        tooltip: {
-                          x: {
-                            format: 'dd/MM/yy HH:mm'
-                          },
-                        }
-                      }).render();
-                    });
-                  </script>
-                  <!-- End Line Chart -->
 
                 </div>
 
@@ -644,14 +596,14 @@
                 {% for sight in hotTop10Data %}
                 <div class="activity-item d-flex" style="margin-bottom:5px">
                   <a href="{{ sight.url }}">
-                      <img style="width:50px;height:50px;object-fit:cover;margin-right:5px;" src="{{ sight }}" alt="">
+                      <img style="width:50px;height:50px;object-fit:cover;margin-right:5px;" src="{{sight.photos}}" alt="">
                   </a>
                   <div class="activite-label">
                     {{ sight.name }}
                   </div>
                   <i class='bi bi-circle-fill activity-badge text-danger align-self-start'></i>
                   <div class="activity-content">
-                     {{ sight.address }}<a href="#" class="fw-bold text-dark">{{ sight.comment_score }}分</a>
+                     {{ sight.address }}<a href="#" style="margin-left:5px;color:orange!important;" class="fw-bold text-dark">{{ sight.comment_score }}分</a>
                   </div>
                 </div>
                 {% endfor %}
@@ -676,60 +628,9 @@
             </div>
 
             <div class="card-body pb-0">
-              <h5 class="card-title">Budget Report <span>| This Month</span></h5>
+              <h5 class="card-title">用户创建时间占比分布</span></h5>
 
-              <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
-
-              <script>
-                document.addEventListener("DOMContentLoaded", () => {
-                  var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
-                    legend: {
-                      data: ['Allocated Budget', 'Actual Spending']
-                    },
-                    radar: {
-                      // shape: 'circle',
-                      indicator: [{
-                          name: 'Sales',
-                          max: 6500
-                        },
-                        {
-                          name: 'Administration',
-                          max: 16000
-                        },
-                        {
-                          name: 'Information Technology',
-                          max: 30000
-                        },
-                        {
-                          name: 'Customer Support',
-                          max: 38000
-                        },
-                        {
-                          name: 'Development',
-                          max: 52000
-                        },
-                        {
-                          name: 'Marketing',
-                          max: 25000
-                        }
-                      ]
-                    },
-                    series: [{
-                      name: 'Budget vs spending',
-                      type: 'radar',
-                      data: [{
-                          value: [4200, 3000, 20000, 35000, 50000, 18000],
-                          name: 'Allocated Budget'
-                        },
-                        {
-                          value: [5000, 14000, 28000, 26000, 42000, 21000],
-                          name: 'Actual Spending'
-                        }
-                      ]
-                    }]
-                  });
-                });
-              </script>
+              <div id="mainsTwo" style="width:100%;height:400px"></div>
 
             </div>
           </div><!-- End Budget Report -->
@@ -890,6 +791,148 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
+  <script src="/static/echarts.min.js"></script>
+  <script src="/static/china.js"></script>
+  <script src="/static/hangzhou.js"></script>
+  <script>
+    var myChart = echarts.init(document.getElementById('mains'));
+    var mydata = {{ geoData | safe }}
+    var options = {
+        tooltip:{
+            triggerOn: "mousemove",
+            padding:8,
+            borderWidth:1,
+            borderColor:'#409eff',
+            backgroundColor:'rgba(255,255,255,0.2)',
+            textStyle:{
+                color:'#000',
+                fontSize:12
+            },
+            formatter: function (e,t,n){
+            let data = e.data;
+            return data ? '城市: ' + data.name + '\t景点数: ' + data.value : '暂未拥有数量'
+          }
+        },
+        visualMap:{
+            show:true,
+            left: 26,
+            bottom: 40,
+            showLabel: true,
+            pieces: [
+                {
+                    gte: 300,
+                    label: ">=300",
+                    color: "#ff7979"
+                },
+                {
+                    gte: 150,
+                    lt: 300,
+                    label: "150 - 300",
+                    color: "#badc58"
+                },
+                {
+                    gte: 100,
+                    lt: 150,
+                    label: "100 - 150",
+                    color: "#ffbe76"
+                },
+                {
+                    gte: 50,
+                    lt: 100,
+                    label: "50 - 100",
+                    color: "#f6e58d"
+                },
+                {
+                    gte: 10,
+                    lt: 50,
+                    label: "10 - 50",
+                    color: "#7ed6df"
+                },
+                {
+                    lt: 10,
+                    label: "<10",
+                    color: "orange"
+                }
+            ]
+        },
+        geo: {
+            map: "杭州市",
+            roam: true,
+            scaleLimit: {
+                min:1,
+                max:2
+            },
+            zoom:1,
+            top:10,
+            layoutSize: "100%",
+            label: {
+                normal: {
+                    show:true,
+                    fontSize: "14",
+                    color: "#fff"
+                },
+                emphasis: {
+                    show:false,
+                    textStyle: {
+                        color:"#F3F3F3"
+                    }
+                }
+            },
+            itemStyle: {
+                normal: {
+                    borderColor: "rgba(0,0,0,0.2)",
+                    areaColor: "#008c8c",
+                },
+                emphasis: {
+                    areaColor: "orange",
+                    shadowOffsetX:0,
+                    shadowOffsetY:0,
+                    borderWidth: 0
+                }
+            }
+        },
+        series:[
+            {
+                name:"景点",
+                type:"map",
+                geoIndex:0,
+                data:mydata
+            }
+        ]
+    }
+    myChart.setOption(options);
+  </script>
+  <script>
+      var chartDom = document.getElementById('mainsTwo');
+      var myChart = echarts.init(chartDom)
+      var option;
+      option = {
+      title: {
+        text: '用户创建时间占比',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      series: [
+        {
+          name: '用户创建时间占比',
+          type: 'pie',
+          radius: '50%',
+          data: {{ userBarCharData | safe }},
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
+    option && myChart.setOption(option);
+  </script>
+  <!-- Vendor JS Files -->
   <script src="/static/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/static/vendor/chart.js/chart.min.js"></script>
@@ -901,7 +944,6 @@
 
   <!-- Template Main JS File -->
   <script src="/static/js/main.js"></script>
-
 </body>
 
 </html>

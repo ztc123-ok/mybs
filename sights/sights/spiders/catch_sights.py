@@ -61,7 +61,9 @@ class CatchSightsSpider(scrapy.Spider):
         sight_url = html_tree.xpath("//*[@id='content']/div[4]/div/div[2]/div/div[3]/div/div[2]/dl/dt/a[1]/@href")
         print("urls",sight_url)
         for url in sight_url:
-            if 'hangzhou14' not in url:
+            if 'hangzhou14' in url or 'jiande687' in url or 'tonglu688' in url or 'chunan2249' in url:
+                pass
+            else:
                 print("这不是杭州的景点")
                 continue
             items = SightsItem()

@@ -1,5 +1,21 @@
 from app.models import XcSight, User
+import time
 
+hangzhou_districts = [
+    "上城区",
+    "下城区",
+    "江干区",
+    "拱墅区",
+    "西湖区",
+    "滨江区",
+    "萧山区",
+    "余杭区",
+    "临安区",
+    "富阳区",
+    "建德市",
+    "桐庐县",
+    "淳安县"
+]
 
 def getAllXcSightInfoData():
     return XcSight.objects.all()
@@ -7,3 +23,4 @@ def getAllXcSightInfoData():
 
 def getAllUsersInfoData():
     return User.objects.all()
+
