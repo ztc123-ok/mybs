@@ -63,7 +63,7 @@ class User(models.Model):
     sex = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     avatar = models.CharField(max_length=255, blank=True, null=True)
-    textarea = models.CharField(max_length=255, blank=True, null=True)
+    textarea = models.CharField(max_length=255, default='这个人很懒，什么都没留下。')
     createtime = models.DateTimeField(blank=True, null=True)
 
     class Meta:

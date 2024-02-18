@@ -12,7 +12,7 @@ def login(request):
         try:
             User.objects.get(username=username,password=password)
             request.session['username'] = username
-            return HttpResponse('登录成功即将跳转到首页')
+            return redirect('/app/home')
         except:
             return errorResponse.errorResponse(request,'用户名或密码错误')
 
@@ -31,9 +31,18 @@ def register(request):
                 return errorResponse.errorResponse(request,'不允许为空值')
             if password != confirmPassword:
                 return errorResponse.errorResponse(request,'两次密码不一致')
-            User.objects.create(username=username,password=password,avatar='default.png',createtime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+            User.objects.create(username=username,password=password,avatar='avatar/default.png',createtime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             return redirect('/app/login')
 
         return errorResponse.errorResponse(request,'该用户名已存在')
 
+def logOut(request):
+    request.session.clear()
+    return redirect('/app/login')
 
+def home(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    return render(request,'home.html',{
+        'userInfo':userInfo
+    })
