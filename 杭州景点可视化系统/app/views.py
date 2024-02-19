@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from app.models import User
 from django.http import HttpResponse
-from app.utils import errorResponse,getHomeData,getPublicData
+from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData
 import time
 def login(request):
     if request.method == 'GET':
@@ -44,10 +44,11 @@ def home(request):
     username = request.session.get('username')
     userInfo = User.objects.get(username=username)
     sightNumber,commentsLenMax,commentsName,heatScoreMax,heatScoreName = getHomeData.getHomeTagData()
-    hotTop10Data = getHomeData.getSortData()
+    hotTop10Data = getHomeData.getSortHot()
     year, mon, day = getHomeData.getNowTime()
     geoData = getHomeData.getGeoData()
     userBarCharData = getHomeData.getUserCreateTimeData()
+    scoreTop10Data = getHomeData.getSortScore()
     return render(request,'home.html',{
         'userInfo':userInfo,
         'sightNumber':sightNumber,
@@ -56,6 +57,7 @@ def home(request):
         'heatScoreName':heatScoreName,
         'heatScoreMax':heatScoreMax,
         'hotTop10Data':hotTop10Data,
+        'scoreTop10Data':scoreTop10Data,
         'nowTime':{
             'year':year,
             'mon':mon,
@@ -63,4 +65,37 @@ def home(request):
         },
         'geoData':geoData,
         'userBarCharData':userBarCharData,
+    })
+
+def changeSelfInfo(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    if request.method == 'POST':
+        getChangeSelfInfoData.changeSelfInfo(username,request.POST,request.FILES)
+        userInfo = User.objects.get(username=username)
+    return render(request,'changeSelfInfo.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+    })
+
+def changePassword(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    if request.method == 'POST':
+        res = getChangeSelfInfoData.getChangePassword(userInfo,request.POST)
+        if res != None:
+            return errorResponse.errorResponse(request,res)
+    return render(request,'changePassword.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
     })

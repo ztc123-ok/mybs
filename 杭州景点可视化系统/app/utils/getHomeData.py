@@ -25,7 +25,7 @@ def getHomeTagData():
     return sightNumber,commentsLenMax,commentsName,heatScoreMax,heatScoreName
 
 # 获取热度前10的景点
-def getSortData():
+def getSortHot():
     sortedObjects = sorted(list(XcSightData), key=lambda obj: obj.heat_score, reverse=True)
     hotTop10Data = sortedObjects[:10]
     for i in range(len(hotTop10Data)):
@@ -35,6 +35,25 @@ def getSortData():
             pass
     # print(top_10)
     return hotTop10Data
+
+# 获取评分前10的景点
+def getSortScore():
+    sortedObjects = sorted(list(XcSightData), key=lambda obj: obj.comment_score, reverse=True)
+    scoreTop10Data = []
+    count = 0
+    for i in range(len(sortedObjects)):
+        if sortedObjects[i].comment_count < 100:
+            continue
+        try:
+            sortedObjects[i].photos = sortedObjects[i].photos.split(",")[0].split("\"")[1]
+        except:
+            pass
+        scoreTop10Data.append(sortedObjects[i])
+        count = count + 1
+        if count == 10:
+            break
+    # print(top_10)
+    return scoreTop10Data
 
 # 获取当前时间
 def getNowTime():
