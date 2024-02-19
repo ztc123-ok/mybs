@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from app.models import User
 from django.http import HttpResponse
-from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData
+from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData
 import time
 def login(request):
     if request.method == 'GET':
@@ -99,3 +99,22 @@ def changePassword(request):
             'day': day,
         },
     })
+
+def tableData(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    tableData = getTableData.getSortHotTableData()
+
+    return render(request,'tableData.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+        'tableData':tableData,
+    })
+
+def addComments(request,id):
+    print("id",id)
