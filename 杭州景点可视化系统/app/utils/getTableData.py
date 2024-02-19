@@ -15,6 +15,8 @@ def getSortHotTableData():
             sortedObjects[i].photos = sortedObjects[i].photos.split(",")[0].split("\"")[1]
         except:
             pass
+        if not sortedObjects[i].open_state:
+            sortedObjects[i].open_state = "未知"
         hotData.append(sortedObjects[i])
     # print(top_10)
     return hotData

@@ -106,6 +106,78 @@ def tableData(request):
     year, mon, day = getHomeData.getNowTime()
     tableData = getTableData.getSortHotTableData()
 
+    # global page_end, page_start
+    try:
+        # 获取url中的page值，并将默认值设置为1
+        page = int(request.GET.get('page', 1))
+        # print(page, type(page))
+        if page < 1:
+            page = 1
+    except Exception:
+        page = 1
+    # print(page)
+
+    # 每页显示的数量
+    page_num = 7
+
+    # 计算总页码数
+    # divmod为len(user_list) / page_num，整数为total_num，余数为remainder
+    total_num, remainder = divmod(len(tableData), page_num)
+    if remainder != 0:
+        total_num += 1
+    # print(total_num)
+
+    # 每页显示的总页码数
+    max_page_num = 7
+
+    # 每页显示总页码数一半数
+    half_num = max_page_num // 2
+    # 实际总页码数 < 页面总页码数
+    if total_num < max_page_num:
+        # 页码起始值
+        page_start = 1
+        # 页码终止值
+        page_end = total_num
+    # 实际总页码数 > 页面总页码数
+    else:
+        # 处理左边极值
+        if page - half_num < 1:
+            page_start = 1
+            page_end = max_page_num
+        # 处理右边极值
+        elif page + half_num > total_num:
+            page_start = total_num - max_page_num + 1
+            page_end = total_num
+        else:
+            page_start = page - half_num
+            page_end = page + half_num
+
+    html_list = []
+    if page == 1:
+        html_list.append('<li class="page-item disabled"><a class="page-link">上一页</a></li>')
+    else:
+        html_list.append(
+        '<li class="page-item"><a class="page-link" href="?page=%s" aria-label="上一页"><span aria-hidden="true">&laquo;</span></a></li>' % (page - 1))
+    for i in range(page_start, page_end + 1):
+        if page == i:
+            html_list.append('<li class="page-item active" aria-current="page"><a class="page-link" href="?page=%s">%s</a></li>' % (i, i))
+        else:
+            html_list.append('<li class="page-item"><a class="page-link" href="?page=%s">%s</a></li>' % (i, i))
+    if page == total_num:
+        html_list.append('<li class="page-item disabled"><a class="page-link">下一页</a></li>')
+    else:
+        html_list.append(
+        '<li class="page-item"><a class="page-link" href="?page=%s" aria-label="下一页"><span aria-hidden="true">&raquo;</span></a></li>' % (page + 1)
+        )
+    html_list = ''.join(html_list)
+
+    # 起始
+    # start = 0
+    start = (page - 1) * page_num
+    # 终止
+    # end = 7
+    end = page * page_num
+
     return render(request,'tableData.html',{
         'userInfo':userInfo,
         'nowTime': {
@@ -113,7 +185,8 @@ def tableData(request):
             'mon': mon,
             'day': day,
         },
-        'tableData':tableData,
+        'tableData':tableData[start: end],
+        'html_list': html_list,
     })
 
 def addComments(request,id):

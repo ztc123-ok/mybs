@@ -34,11 +34,11 @@
                 <thead>
                   <tr>
                     <th style="width:50px" scope="col">#</th>
-                    <th style="width:100px" scope="col">景点名称</th>
-                    <th style="width:100px" scope="col">景点地址</th>
-                    <th style="width:100px" scope="col">景点热度</th>
-                    <th style="width:100px" scope="col">景点评分</th>
-                    <th style="width:100px" scope="col">评论数量</th>
+                    <th style="width:150px" scope="col">景点名称</th>
+                    <th style="width:180px" scope="col">景点地址</th>
+                    <th style="width:90px" scope="col">景点热度</th>
+                    <th style="width:90px" scope="col">景点评分</th>
+                    <th style="width:90px" scope="col">评论数量</th>
                     <th style="width:100px" scope="col">开放状态</th>
                     <th style="width:100px" scope="col">图片</th>
                     <th style="width:100px" scope="col">操作</th>
@@ -53,11 +53,11 @@
                     <td><a href="#">{{ i.address }}</a></td>
                     <td style="text-align: center;"><span class="badge bg-danger">{{ i.heat_score }}</span></td>
                     <td style="text-align: center;"><span class="badge bg-success">{{ i.comment_score }}分</span></td>
-                    <td style="color:orange">{{ i.comment_count }}</td>
-                    <td>{{ i.open_state }}</td>
+                    <td style="color:orange;text-align: center;">{{ i.comment_count }}</td>
+                    <td style="">{{ i.open_state }}</td>
                     <td>
                       <a href="{{ i.url }}">
-                        <img style="width:100%" src = "{{ i.photo }}" alt="">
+                        <img style="width:100%" src = "{{ i.photos }}" alt="">
                       </a>
                     </td>
                     <td style="text-align: center;line-height:70px">
@@ -67,6 +67,11 @@
                   {% endfor %}
                 </tbody>
               </table>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                    {{ html_list|safe }}
+                  </ul>
+                </nav>
               <!-- End Default Table Example -->
             </div>
           </div>
