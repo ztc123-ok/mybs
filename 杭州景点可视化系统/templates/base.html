@@ -118,6 +118,13 @@
         </a>
       </li><!-- End Tables Nav -->
 
+      <li class="nav-heading">数据可视化</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'districtChar' %}">
+          <i class="bi bi-bar-chart"></i><span>地区景点分析</span>
+        </a>
+      </li>
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-bar-chart"></i><span>Charts</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -243,7 +250,7 @@
 
         <!-- Left side columns -->
         <div class="col-lg-8">
-          <div class="row">
+          <div class="row" >
 
             <!-- Sales Card -->
             <div class="col-xxl-4 col-md-6">
@@ -258,7 +265,7 @@
                       <i class="bi bi-geo-alt-fill"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{ sightNumber }}个</h6>
+                      <h6 style="font-size: 22px">{{ sightNumber }}个</h6>
 
                     </div>
                   </div>
@@ -291,7 +298,7 @@
             </div><!-- End Revenue Card -->
 
             <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
+            <div class="col-xxl-4 col-xl-6">
 
               <div class="card info-card customers-card">
 

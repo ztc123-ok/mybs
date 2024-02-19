@@ -9,5 +9,6 @@ urlpatterns = [
     path('changeSelfInfo/',views.changeSelfInfo,name='changeSelfInfo'),
     path('changePassword/',views.changePassword,name='changePassword'),
     path('tableData/',views.tableData,name='tableData'),
-    path('addComments/<int:id>',views.addComments,name='addComments'),
+    path('getDetail/<int:id>',views.getDetail,name='getDetail'),
+    path('districtChar/',views.districtChar,name='districtChar'),
 ]

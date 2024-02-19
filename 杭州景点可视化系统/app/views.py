@@ -189,5 +189,19 @@ def tableData(request):
         'html_list': html_list,
     })
 
-def addComments(request,id):
+def getDetail(request,id):
     print("id",id)
+
+
+def districtChar(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    return render(request,'districtChar.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+    })
