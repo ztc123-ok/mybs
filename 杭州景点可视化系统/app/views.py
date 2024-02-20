@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from app.models import User
 from django.http import HttpResponse
-from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData
+from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData
 import time
 def login(request):
     if request.method == 'GET':
@@ -197,6 +197,7 @@ def districtChar(request):
     username = request.session.get('username')
     userInfo = User.objects.get(username=username)
     year, mon, day = getHomeData.getNowTime()
+    Xdata,ydata = getEchartsData.districtCharData()
     return render(request,'districtChar.html',{
         'userInfo':userInfo,
         'nowTime': {
@@ -204,4 +205,34 @@ def districtChar(request):
             'mon': mon,
             'day': day,
         },
+        'districtCharData':{
+            'Xdata':Xdata,
+            'ydata':ydata,
+        }
+    })
+
+def rateChar(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    districtList = ["全部"] + getPublicData.hangzhou_districts
+    hotList = getEchartsData.districtHotData("全部")
+    scoreList = getEchartsData.districtScoreData("全部")
+    choose = "全部"
+    if request.method == 'POST':
+        hotList = getEchartsData.districtHotData(request.POST.get('district'))
+        scoreList = getEchartsData.districtScoreData(request.POST.get('district'))
+        choose = request.POST.get('district')
+
+    return render(request,'rateChar.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+        'districtList':districtList,
+        'hotList':hotList,
+        'scoreList':scoreList,
+        'choose':choose,
     })

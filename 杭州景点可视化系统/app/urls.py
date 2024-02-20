@@ -11,4 +11,5 @@ urlpatterns = [
     path('tableData/',views.tableData,name='tableData'),
     path('getDetail/<int:id>',views.getDetail,name='getDetail'),
     path('districtChar/',views.districtChar,name='districtChar'),
+    path('rateChar/',views.rateChar,name='rateChar'),
 ]
