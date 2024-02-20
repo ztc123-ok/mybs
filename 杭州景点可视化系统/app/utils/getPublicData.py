@@ -1,4 +1,4 @@
-from app.models import XcSight, User
+from app.models import XcSight, User,Westlake
 import time
 
 hangzhou_districts = [
@@ -23,4 +23,8 @@ def getAllXcSightInfoData():
 
 def getAllUsersInfoData():
     return User.objects.all()
+
+def getAllWestlakesInfoData():
+    WestlakeData = sorted(Westlake.objects.all(), key=lambda x: x.mydate)
+    return WestlakeData
 

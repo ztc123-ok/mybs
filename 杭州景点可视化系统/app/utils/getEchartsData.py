@@ -1,7 +1,9 @@
 from app.utils import getPublicData
+import datetime
 
 XcSightData = getPublicData.getAllXcSightInfoData()
 XcSightData = list(filter(lambda x: 'hangzhou14' in x.url or 'jiande687' in x.url or 'tonglu688' in x.url or'chunan2249' in x.url, XcSightData))
+WestlakeData = getPublicData.getAllWestlakesInfoData()
 
 def districtCharData():
     dataDic = {}
@@ -48,3 +50,15 @@ def districtScoreData(district):
         })
     print(resultData)
     return resultData
+
+def passengerCharData(sight_name):
+    sightList = []
+    passengerDic = {}
+    for sight in WestlakeData:
+        if sight.sight_name not in sightList:
+            sightList.append(sight.sight_name)
+        if sight.sight_name == sight_name:
+            passengerDic[str(sight.mydate)] = float(sight.passenger_number)
+    print(list(passengerDic.keys()))
+    print(list(passengerDic.values()))
+    return sightList,list(passengerDic.keys()),list(passengerDic.values())

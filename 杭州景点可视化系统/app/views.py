@@ -236,3 +236,27 @@ def rateChar(request):
         'scoreList':scoreList,
         'choose':choose,
     })
+
+def passengerChar(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    sightName = "灵隐飞来峰"
+    if request.method == 'POST':
+        sightName = request.POST.get('sightName')
+    sightList, XData, yData = getEchartsData.passengerCharData(sightName)
+    return render(request,'passengerChar.html',{
+        'userInfo':userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+        'sightList': sightList,
+        'sightName': sightName,
+        'echartsData':{
+            'XData':XData,
+            'yData':yData,
+        },
+    })
+

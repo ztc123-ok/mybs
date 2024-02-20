@@ -12,4 +12,5 @@ urlpatterns = [
     path('getDetail/<int:id>',views.getDetail,name='getDetail'),
     path('districtChar/',views.districtChar,name='districtChar'),
     path('rateChar/',views.rateChar,name='rateChar'),
+    path('passengerChar/',views.passengerChar,name='passengerChar'),
 ]
