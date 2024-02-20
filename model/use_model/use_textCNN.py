@@ -46,7 +46,7 @@ def read_data(sight_id,num = None):
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",charset="utf8")
     cursor = connect.cursor()
 
-    sql = "select id,comments from xc_comments where sight_id = {}".format(sight_id)
+    sql = "select id,comments from xc_comments_timesort where sight_id = {}".format(sight_id)
     cursor.execute(sql)
     rest = cursor.fetchall()
     data = [row[1] for row in rest]
@@ -102,7 +102,7 @@ def update_possitive(id,type):
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
                                            charset="utf8")
     cursor = connect.cursor()
-    update_topic = "UPDATE xc_comments SET positive = '{}' where id = {}".format(type,id)
+    update_topic = "UPDATE xc_comments_timesort SET positive = '{}' where id = {}".format(type,id)
     cursor.execute(update_topic)
     connect.commit()
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     #data_path = "comment.csv"
 
     # 当前评论选取的数据库是 xc_comments <<<-------------------------------
-    sight_id = '2'
+    sight_id = '1'
     texts,labels = read_data(sight_id)
     print(len(texts))
     max_len = 20  # 超参数，一个句子最大字数

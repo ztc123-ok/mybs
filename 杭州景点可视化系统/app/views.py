@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from app.models import User
 from django.http import HttpResponse
-from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData
+from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
 def login(request):
     if request.method == 'GET':
@@ -198,7 +198,31 @@ def tableData(request):
     })
 
 def getDetail(request,id):
-    print("id",id)
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    sight = getDetailData.getSightById(id)
+    CommentsTimesort = getDetailData.getCommentsById(id)
+    try:
+        sight.photos = sight.photos.split(",")[0].split("\"")[1]
+    except:
+        pass
+    topicWords = sight.topic.split(";")[0].split(" ")
+    senceWords = sight.topic.split(";")[1].split(" ")
+    return render(request, 'detail.html', {
+        'userInfo': userInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+        'sight':sight,
+        'LDA':{
+            'topicWords':topicWords,
+            'senceWords':senceWords,
+        },
+        'CommentsTimesort':CommentsTimesort,
+    })
 
 
 def districtChar(request):

@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title%}
+    详情页
+{% endblock %}
+
+{% block content %}
+    <div class="pagetitle" style="display: flex;align-items: center">
+      <div style="margin-right: auto">
+        <h1>{{ sight.name }}</h1>
+        <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ sight.name }}</a></li>
+          <li class="breadcrumb-item active">详情页</li>
+        </ol>
+      </nav>
+      </div>
+      <h5>
+        {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+      </h5>
+    </div>
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row" >
+
+            <div class="col-xxl-4 col-xl-4">
+
+              <div class="card info-card customers-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">景点热度</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-thermometer-high"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 style="font-size: 22px">{{sight.heat_score}}<span class="text-muted small pt-2 ps-1">/10 </span></h6>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Customers Card -->
+
+                        <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">景点评分</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-hand-thumbs-up"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 style="font-size: 22px">{{ sight.comment_score }}<span class="text-muted small pt-2 ps-1">/5 </span></h6>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card revenue-card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">评论数</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-chat-text"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 style="font-size: 22px">{{sight.comment_count}}<span class="text-muted small pt-2 ps-1">条</span></h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+                        <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">景点特色</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    {% for i in LDA.topicWords %}
+                    <div class="ps-3">
+                      <h6 style="font-size: 22px">{{ i }}<span class="text-muted small pt-2 ps-1"> </span></h6>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+                        <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">游客感受</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    {% for i in LDA.senceWords %}
+                    <div class="ps-3">
+                      <h6 style="font-size: 22px">{{ i }}<span class="text-muted small pt-2 ps-1"> </span></h6>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+            <!-- Reports -->
+            <div class="col-12">
+              <div class="card">
+
+
+                <div class="card-body">
+                  <h5 class="card-title">词云图</h5>
+
+                  <!-- Line Chart -->
+                  <div id="mains" style="width:100%;height:450px"></div>
+
+
+                </div>
+
+              </div>
+            </div><!-- End Reports -->
+
+            <!-- Recent Sales -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="card-body">
+                  <h5 class="card-title">最新评论 <span>| 好评率？</span></h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">用户昵称</th>
+                        <th scope="col">评论</th>
+                        <th scope="col">情感标签</th>
+                        <th scope="col">ip地址</th>
+                        <th scope="col">评论时间</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for i in CommentsTimesort %}
+                        <tr>
+                        <th scope="row"><a href="#">#{{ i.id }}</a></th>
+                        <td style="width:80px">{{ i.comments_user }}</td>
+                        <td style="width:400px"><a href="#" class="text-primary">{{ i.comments }}</a></td>
+                        <td style="width:80px;text-align: center;">
+                          <span class="badge bg-success">
+                            {{ i.positive }}
+                          </span>
+                        </td>
+                        <td style="width:80px">
+                          <span class="text-muted">
+                          {{ i.comments_ip }}
+                          </span>
+                        </td>
+                        <td style="width:80px">
+                          <span class="text-muted">
+                          {{ i.create_time }}
+                          </span>
+                        </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Recent Sales -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Recent Activity -->
+          <div class="card">
+
+            <div class="card-body">
+              <h5 class="card-title">热度排名前十 <span>| 景点</span></h5>
+
+              <div class="activity">
+                  <a href="{{ sight.url }}">
+                    <img style="width:100%" src="{{ sight.photos }}" alt="">
+                  </a>
+              </div>
+
+            </div>
+          </div><!-- End Recent Activity -->
+
+          <!-- Budget Report -->
+          <div class="card">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">景点介绍</span></h5>
+
+              <div id="mainsTwo" style="width:100%;height:400px"></div>
+
+            </div>
+          </div><!-- End Budget Report -->
+
+          <div class="card">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">景点优惠</span></h5>
+
+            </div>
+          </div><!-- End Budget Report -->
+
+
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+{% endblock %}
+{% block echarts %}
+    <script>
+
+    </script>
+{% endblock %}

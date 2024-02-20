@@ -212,7 +212,7 @@ def save_topic(tword,sight_id):
     connect.close()
 
 if __name__ == "__main__":
-    sight_id = 5
+    sight_id = 2
 
     if sight_id == None:
         list_id = get_id()

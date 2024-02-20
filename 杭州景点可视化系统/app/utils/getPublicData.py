@@ -1,4 +1,4 @@
-from app.models import XcSight, User,Westlake
+from app.models import XcSight, User,Westlake,XcComments,XcCommentsTimesort
 import time
 
 hangzhou_districts = [
@@ -27,4 +27,11 @@ def getAllUsersInfoData():
 def getAllWestlakesInfoData():
     WestlakeData = sorted(Westlake.objects.all(), key=lambda x: x.mydate)
     return WestlakeData
+
+def getAllCommentsData():
+    return XcComments.objects.all()
+
+def getAllCommentsTimesortData():
+    CommentsTimesortData = sorted(XcCommentsTimesort.objects.all(), key=lambda x: x.comments_time ,reverse=True)
+    return CommentsTimesortData
 
