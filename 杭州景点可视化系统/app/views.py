@@ -104,18 +104,25 @@ def tableData(request):
     username = request.session.get('username')
     userInfo = User.objects.get(username=username)
     year, mon, day = getHomeData.getNowTime()
-    tableData = getTableData.getSortHotTableData()
 
+    tableData = getTableData.getSortHotTableData()
+    sightText = 'None'
     # global page_end, page_start
     try:
         # 获取url中的page值，并将默认值设置为1
         page = int(request.GET.get('page', 1))
+        sightText = request.GET.get('sightText', 'None')
+        tableData = getTableData.getSortHotTableData(sightText)
         # print(page, type(page))
         if page < 1:
             page = 1
     except Exception:
         page = 1
     # print(page)
+
+    if request.method == 'POST':
+        sightText = request.POST.get('sightText')
+        tableData = getTableData.getSortHotTableData(sightText)
 
     # 每页显示的数量
     page_num = 7
@@ -157,17 +164,17 @@ def tableData(request):
         html_list.append('<li class="page-item disabled"><a class="page-link">上一页</a></li>')
     else:
         html_list.append(
-        '<li class="page-item"><a class="page-link" href="?page=%s" aria-label="上一页"><span aria-hidden="true">&laquo;</span></a></li>' % (page - 1))
+        '<li class="page-item"><a class="page-link" href="?page=%s&sightText=%s" aria-label="上一页"><span aria-hidden="true">&laquo;</span></a></li>' % (page - 1,sightText))
     for i in range(page_start, page_end + 1):
         if page == i:
-            html_list.append('<li class="page-item active" aria-current="page"><a class="page-link" href="?page=%s">%s</a></li>' % (i, i))
+            html_list.append('<li class="page-item active" aria-current="page"><a class="page-link" href="?page=%s&sightText=%s">%s</a></li>' % (i, sightText ,i))
         else:
-            html_list.append('<li class="page-item"><a class="page-link" href="?page=%s">%s</a></li>' % (i, i))
+            html_list.append('<li class="page-item"><a class="page-link" href="?page=%s&sightText=%s">%s</a></li>' % (i,sightText ,i))
     if page == total_num:
         html_list.append('<li class="page-item disabled"><a class="page-link">下一页</a></li>')
     else:
         html_list.append(
-        '<li class="page-item"><a class="page-link" href="?page=%s" aria-label="下一页"><span aria-hidden="true">&raquo;</span></a></li>' % (page + 1)
+        '<li class="page-item"><a class="page-link" href="?page=%s&sightText=%s" aria-label="下一页"><span aria-hidden="true">&raquo;</span></a></li>' % (page + 1,sightText)
         )
     html_list = ''.join(html_list)
 
@@ -187,6 +194,7 @@ def tableData(request):
         },
         'tableData':tableData[start: end],
         'html_list': html_list,
+        'sightText':sightText,
     })
 
 def getDetail(request,id):
