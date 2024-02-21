@@ -3,6 +3,8 @@ from app.models import User
 from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
+from app.mechineLearning import LDA
+
 def login(request):
     if request.method == 'GET':
         return render(request,'login.html')
@@ -207,8 +209,17 @@ def getDetail(request,id):
         sight.photos = sight.photos.split(",")[0].split("\"")[1]
     except:
         pass
-    topicWords = sight.topic.split(";")[0].split(" ")
-    senceWords = sight.topic.split(";")[1].split(" ")
+    try:
+        topicWords = sight.topic.split(";")[0].split(" ")
+        senceWords = sight.topic.split(";")[1].split(" ")
+    except:
+        print("正在处理景点 ",sight.id," 的主题词")
+        topic = LDA.doLDA(id)
+        sight.topic = topic
+        sight.save()
+        topicWords = topic.split(";")[0].split(" ")
+        senceWords = topic.split(";")[1].split(" ")
+
     return render(request, 'detail.html', {
         'userInfo': userInfo,
         'nowTime': {

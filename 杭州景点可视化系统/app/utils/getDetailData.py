@@ -1,4 +1,5 @@
 from app.utils import getPublicData
+from app.mechineLearning import LDA,use_textCNN
 import heapq
 import time
 from datetime import datetime
@@ -14,7 +15,24 @@ def getSightById(id):
             return sight
     return None
 
+def doTextCNN(id):
+    CommentsTimesort = []
+    comments = []
+    labels = []
+    for i in range(len(CommentsTimesortData)):
+        if(CommentsTimesortData[i].sight_id == id):
+            CommentsTimesort.append(CommentsTimesortData[i])
+    for i in range(len(CommentsTimesort)):
+        comments.append(CommentsTimesort[i].comments)
+        labels.append(CommentsTimesort[i].id)
+    results = use_textCNN.doTextCNN(comments,labels)
+    for i in range(len(CommentsTimesort)):
+        CommentsTimesort[i].positive = results[i]
+        CommentsTimesort[i].save()
+    return CommentsTimesort
+
 def getCommentsById(id):
+    CommentsTimesortData = doTextCNN(id)
     CommentsTimesort = []
     flag = 0
     for i in CommentsTimesortData:

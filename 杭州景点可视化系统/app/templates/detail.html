@@ -139,10 +139,8 @@
 
                 <div class="card-body">
                   <h5 class="card-title">词云图</h5>
-
+                      <img style="width:100%" src="/media/WordCloud/WordCloud_{{ sight.id }}.png" alt="">
                   <!-- Line Chart -->
-                  <div id="mains" style="width:100%;height:450px"></div>
-
 
                 </div>
 
@@ -161,10 +159,10 @@
                       <tr>
                         <th scope="col">#</th>
                         <th scope="col">用户昵称</th>
-                        <th scope="col">评论</th>
-                        <th scope="col">情感标签</th>
+                        <th scope="col" style="text-align: center;">评论</th>
+                        <th scope="col" style="text-align: center;">情感</th>
                         <th scope="col">ip地址</th>
-                        <th scope="col">评论时间</th>
+                        <th scope="col">时间</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -174,9 +172,16 @@
                         <td style="width:80px">{{ i.comments_user }}</td>
                         <td style="width:400px"><a href="#" class="text-primary">{{ i.comments }}</a></td>
                         <td style="width:80px;text-align: center;">
+                          {% if i.positive == '好评'  %}
                           <span class="badge bg-success">
                             {{ i.positive }}
                           </span>
+                          {% endif %}
+                          {% if i.positive == '差评'  %}
+                          <span class="badge bg-danger">
+                            {{ i.positive }}
+                          </span>
+                          {% endif %}
                         </td>
                         <td style="width:80px">
                           <span class="text-muted">
@@ -220,21 +225,24 @@
           </div><!-- End Recent Activity -->
 
           <!-- Budget Report -->
-          <div class="card">
+          <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding-bottom: 40px;">
 
             <div class="card-body pb-0">
               <h5 class="card-title">景点介绍</span></h5>
-
-              <div id="mainsTwo" style="width:100%;height:400px"></div>
+                <span class="text-muted" style="margin: 0;">
+                    {{ sight.introduction }}
+                </span>
 
             </div>
           </div><!-- End Budget Report -->
 
-          <div class="card">
+          <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding-bottom: 40px;">
 
-            <div class="card-body pb-0">
-              <h5 class="card-title">景点优惠</span></h5>
-
+            <div class="card-body pb-0" >
+              <h5 class="card-title" style="margin: 0;">景点优惠</span></h5>
+                  <span class="text-muted" style="margin: 0;">
+                    {{ sight.discount }}
+                  </span>
             </div>
           </div><!-- End Budget Report -->
 
