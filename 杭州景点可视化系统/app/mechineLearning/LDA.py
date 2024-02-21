@@ -39,7 +39,7 @@ def clean(list,restr=''):
             list[i] = list[i].replace('\\', restr)
 
     return list
-def read_data(sight_id):
+def read_data(sight_id,enviroment = None):
 
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
                                            charset="utf8")
@@ -59,7 +59,11 @@ def read_data(sight_id):
     texts = []  # 评论
     texts_timesort = []  # 时间排序评论
 
-    file_stop = 'app/mechineLearning/hit_stopwords.txt'  # 停用词表
+    if enviroment != None:
+        file_stop = 'topic_stopwords.txt'  # 停用词表
+    else:
+        file_stop = 'app/mechineLearning/topic_stopwords.txt'  # 停用词表
+
     with open(file_stop, 'r', encoding='utf-8-sig') as f:
         lines = f.readlines()  # lines是list类型
         for line in lines:
@@ -157,7 +161,7 @@ def get_pic_words(texts,sight_id):
 
 
 # 绘制词云图
-def drawcloud(texts,sight_id):
+def drawcloud(texts,sight_id,enviroment=None):
     strs = ""
     flag_list = ['n', 'an', 'v', 'a', 'b', 'nr', 'vn']
     for words in texts:
@@ -176,7 +180,10 @@ def drawcloud(texts,sight_id):
     plt.axis("off")
     #plt.show()
     # 保存文件
-    wc.to_file(os.path.join(os.path.join(settings.MEDIA_ROOT, 'WordCloud'),"WordCloud_{}.png".format(sight_id)))
+    if enviroment != None:
+        wc.to_file(os.path.join(r"D:\www\mybs\杭州景点可视化系统\media\WordCloud", "WordCloud_{}.png".format(sight_id)))
+    else:
+        wc.to_file(os.path.join(os.path.join(settings.MEDIA_ROOT, 'WordCloud'),"WordCloud_{}.png".format(sight_id)))
 
 def print_top_words(model, feature_names, n_top_words):
     tword = []
@@ -245,5 +252,44 @@ def doLDA(id):
     # save_topic(tword,id)
 
     return ";".join(tword)
+
+if __name__ == "__main__":
+    sight_id = 12
+
+    if sight_id == None:
+        list_id = get_id()
+    else:
+        list_id = [sight_id]
+
+    for id in list_id:
+        texts, texts_timesort = read_data(id,"外部运行")
+
+        texts = texts_timesort + texts
+
+        data = pd.DataFrame({
+            'content': texts  # 实际的评论文本
+        })
+        # 词频统计
+        word_list = get_pic_words(texts,id)
+        # 绘制词云图
+        drawcloud(texts,id,"外部运行")
+
+        data["content_noun"] = data.content.apply(keep_noun_split_words)
+        data["content_adj"] = data.content.apply(keep_adj_split_words)
+
+        tf_vectorizer_noun = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
+        tf_vectorizer_adj = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
+        tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
+        tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
+
+        # 看下来2个效果比较好，一个是景点特色，一个是游客感受
+        lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
+        lda.fit(tf_noun)
+        # 景点特色
+        tword = print_top_words(lda, tf_vectorizer_noun.get_feature_names_out(), 8)
+        lda.fit(tf_adj)
+        # 游客感受
+        tword = tword + print_top_words(lda, tf_vectorizer_adj.get_feature_names_out(), 8)
+        save_topic(tword,id)
 
 
