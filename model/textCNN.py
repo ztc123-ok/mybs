@@ -177,7 +177,7 @@ if __name__ == "__main__":
     texts,labels = read_data(data_path)
 
     from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.10, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.01, shuffle=True)
     print("占比情况",Counter(y_train))
     # data_path = "test.csv"
     # from use_textCNN import read_data
