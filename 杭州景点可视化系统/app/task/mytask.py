@@ -12,7 +12,7 @@ def print_time(threadName,delay):
         time_now = time.strftime("%H:%M:%S", time.localtime())
         print(time_now)
 
-    # 这里之后写一个死循环，到时间点执行更新函数 ，这里要设sleep不然太耗cpu，判断给他一个区间
+    # 这里之后写一个死循环，到时间点执行更新函数 ，这里要设sleep不然太耗cpu，判断给他一个区间；定时任务更新数据库记得使用django的save
     # while True:
     #     time_now = time.strftime("%H:%M:%S", time.localtime())  # 刷新
     #     if time_now == "15:30:10":  # 此处设置每天定时的时间
