@@ -121,7 +121,7 @@ def keep_adj_split_words(text):
 
 def get_pic_words(texts,sight_id):
 
-    flag_list = ['n','an','v','a','b','nr','vn']
+    flag_list = ['n','an','v','a','b','nr','vn','nrfg']
     word_list = {}
     for words in texts:
         seg_list = psg.cut(words)
@@ -134,6 +134,8 @@ def get_pic_words(texts,sight_id):
     # 按词频从高到低排序
     counts = sorted(word_list.items(), key=lambda x: x[1], reverse=True)
     # 输出前10个
+    if len(counts) < 10:
+        return counts
     for i in range(10):
         word, count = counts[i]
         print('{:<10}{:>5}'.format(word, count))
@@ -254,23 +256,19 @@ def doLDA(id):
     return ";".join(tword)
 
 if __name__ == "__main__":
-    sight_id = 12
-
-    if sight_id == None:
-        list_id = get_id()
-    else:
-        list_id = [sight_id]
-
-    for id in list_id:
+    # sight_id = 12
+    my_list = list(range(371, 1861))
+    for id in my_list:
         texts, texts_timesort = read_data(id,"外部运行")
 
         texts = texts_timesort + texts
-
         data = pd.DataFrame({
             'content': texts  # 实际的评论文本
         })
         # 词频统计
         word_list = get_pic_words(texts,id)
+        if len(word_list) == 0:
+            continue
         # 绘制词云图
         drawcloud(texts,id,"外部运行")
 
@@ -279,17 +277,21 @@ if __name__ == "__main__":
 
         tf_vectorizer_noun = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
         tf_vectorizer_adj = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
-        tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
-        tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
 
-        # 看下来2个效果比较好，一个是景点特色，一个是游客感受
-        lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
-        lda.fit(tf_noun)
-        # 景点特色
-        tword = print_top_words(lda, tf_vectorizer_noun.get_feature_names_out(), 8)
-        lda.fit(tf_adj)
-        # 游客感受
-        tword = tword + print_top_words(lda, tf_vectorizer_adj.get_feature_names_out(), 8)
-        save_topic(tword,id)
+        try:
+            tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
+            tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
+
+            # 看下来2个效果比较好，一个是景点特色，一个是游客感受
+            lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
+            lda.fit(tf_noun)
+            # 景点特色
+            tword = print_top_words(lda, tf_vectorizer_noun.get_feature_names_out(), 8)
+            lda.fit(tf_adj)
+            # 游客感受
+            tword = tword + print_top_words(lda, tf_vectorizer_adj.get_feature_names_out(), 8)
+            save_topic(tword,id)
+        except:
+            pass
 
 

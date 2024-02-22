@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
 from app.mechineLearning import LDA
+from app.task import mytask
+
+mytask.doTask()
 
 def login(request):
     if request.method == 'GET':
@@ -213,12 +216,14 @@ def getDetail(request,id):
         topicWords = sight.topic.split(";")[0].split(" ")
         senceWords = sight.topic.split(";")[1].split(" ")
     except:
-        print("正在处理景点 ",sight.id," 的主题词")
-        topic = LDA.doLDA(id)
-        sight.topic = topic
-        sight.save()
-        topicWords = topic.split(";")[0].split(" ")
-        senceWords = topic.split(";")[1].split(" ")
+        # print("正在处理景点 ",sight.id," 的主题词")
+        # topic = LDA.doLDA(id)
+        # sight.topic = topic
+        # sight.save()
+        # topicWords = topic.split(";")[0].split(" ")
+        # senceWords = topic.split(";")[1].split(" ")
+        topicWords = "这个景点太冷门了吧"
+        senceWords = "这个景点太冷门了吧"
 
     return render(request, 'detail.html', {
         'userInfo': userInfo,

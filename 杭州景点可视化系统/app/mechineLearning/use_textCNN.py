@@ -83,7 +83,7 @@ def split_comments(comments,num = None):
     return texts
 
 def update_possitive(id,type):
-    print("正在更新评论情感",id,type)
+    # print("正在更新评论情感",id,type)
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",
                                            charset="utf8")
     cursor = connect.cursor()
@@ -117,7 +117,7 @@ class TextDataset(Dataset):
         return len(self.all_text)
 
 def doTextCNN(comments,labels):
-    print("进行TextCNN评论数：",len(comments))
+    # print("进行TextCNN评论数：",len(comments))
 
     texts = split_comments(comments)
 
@@ -213,17 +213,22 @@ class TextCNNModel(nn.Module):
             # 预测值最大下标返回（概率）
             return torch.argmax(pre,dim=-1)
 
-file_stop = 'app/mechineLearning/hit_stopwords.txt'   # 停用词表
-tf_json = "app/mechineLearning/word_2_index.json"
-model_pt = 'app/mechineLearning/textCNN.pt'
-# file_stop = 'hit_stopwords.txt'   # 停用词表
-# tf_json = "word_2_index.json"
-# model_pt = 'textCNN.pt'
+# file_stop = 'app/mechineLearning/hit_stopwords.txt'   # 停用词表
+# tf_json = "app/mechineLearning/word_2_index.json"
+# model_pt = 'app/mechineLearning/textCNN.pt'
+file_stop = 'hit_stopwords.txt'   # 停用词表
+tf_json = "word_2_index.json"
+model_pt = 'textCNN.pt'
 
 if __name__ == "__main__":
-    sight_id = '12'
-    texts, labels = read_data(sight_id)
-    print(len(texts))
-    results = doTextCNN(texts, labels)
-    for i in range(len(texts)):
-        update_possitive(labels[i], results[i])
+    # sight_id = '12'
+    my_list = list(range(1, 1861))
+    for sight_id in my_list:
+        print("标注景点：",sight_id)
+        sight_id = str(sight_id)
+
+        texts, labels = read_data(sight_id)
+        print(len(texts))
+        results = doTextCNN(texts, labels)
+        for i in range(len(texts)):
+            update_possitive(labels[i], results[i])

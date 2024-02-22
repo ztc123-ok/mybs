@@ -32,7 +32,7 @@ def doTextCNN(id):
     return CommentsTimesort
 
 def getCommentsById(id):
-    CommentsTimesortData = doTextCNN(id)
+    # CommentsTimesortData = doTextCNN(id) # 这里本来打算点击一个更新一个，但响应太慢了，打算定时批量更新
     CommentsTimesort = []
     flag = 0
     for i in CommentsTimesortData:
