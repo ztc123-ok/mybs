@@ -1,5 +1,5 @@
 from app.utils import getPublicData
-from app.mechineLearning import LDA,use_textCNN
+from mechineLearning import LDA,use_textCNN
 import heapq
 import time
 from datetime import datetime
@@ -34,11 +34,17 @@ def doTextCNN(id):
 def getCommentsById(id):
     # CommentsTimesortData = doTextCNN(id) # 这里本来打算点击一个更新一个，但响应太慢了，打算定时批量更新
     CommentsTimesort = []
-    flag = 0
+    count = 0
+    positive = 0
     for i in CommentsTimesortData:
         if i.sight_id == id:
-            CommentsTimesort.append(i)
-            flag = flag + 1
-        if flag == 10:
-            break
-    return CommentsTimesort
+            if count < 10:
+                CommentsTimesort.append(i)
+            if i.positive == '好评':
+                positive = positive + 1
+            count = count + 1
+    if count > 0:
+        positiveRate = round(positive/count*100,2)
+    else:
+        positiveRate = 0
+    return CommentsTimesort,positiveRate

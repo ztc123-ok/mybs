@@ -220,8 +220,28 @@ file_stop = 'hit_stopwords.txt'   # 停用词表
 tf_json = "word_2_index.json"
 model_pt = 'textCNN.pt'
 
+def textCNNTask():
+    global file_stop
+    global tf_json
+    global model_pt
+    file_stop = "mechineLearning/hit_stopwords.txt"
+    tf_json = 'mechineLearning/word_2_index.json'
+    model_pt = 'mechineLearning/textCNN.pt'
+    my_list = ['1']
+    # my_list = list(range(1, 1861))
+    for sight_id in my_list:
+        print("标注景点：",sight_id)
+        sight_id = str(sight_id)
+
+        texts, labels = read_data(sight_id)
+        print(len(texts))
+        results = doTextCNN(texts, labels)
+        for i in range(len(texts)):
+            update_possitive(labels[i], results[i])
+
+
 if __name__ == "__main__":
-    # sight_id = '12'
+    # my_list = ['24']
     my_list = list(range(1, 1861))
     for sight_id in my_list:
         print("标注景点：",sight_id)

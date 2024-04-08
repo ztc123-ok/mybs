@@ -105,9 +105,9 @@ def keep_noun_split_words(text):
 def keep_adj_split_words(text):
     seg_list = psg.cut(text)
     # 词性筛选
-    #flag_list = ['n','an','v','a','b','nr','vn']
+    flag_list = ['n','an','v','a','b','nr','vn']
     #flag_list = ['n', 'v', 'a']
-    flag_list = ['a','v'] # 游客感受
+    # flag_list = ['a','v'] # 游客感受
     word_list = []
     for seg_word in seg_list:
         if seg_word.flag in flag_list and len(seg_word.word) > 1:
@@ -233,19 +233,19 @@ if __name__ == "__main__":
         drawcloud(texts,id)
 
         data["content_noun"] = data.content.apply(keep_noun_split_words)
-        data["content_adj"] = data.content.apply(keep_adj_split_words)
+        # data["content_adj"] = data.content.apply(keep_adj_split_words)
 
         tf_vectorizer_noun = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
         tf_vectorizer_adj = CountVectorizer(max_df=0.95, min_df=5, max_features=1000)
-        tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
+        # tf_noun = tf_vectorizer_noun.fit_transform(data["content_noun"].tolist())
         tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
 
         # 看下来2个效果比较好，一个是景点特色，一个是游客感受
-        lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
-        lda.fit(tf_noun)
+        lda = LatentDirichletAllocation(n_components=2, max_iter=60, learning_method='batch', random_state=12345)
+        # lda.fit(tf_noun)
         # 景点特色
         tword = print_top_words(lda, tf_vectorizer_noun.get_feature_names_out(), 8)
         lda.fit(tf_adj)
         # 游客感受
         tword = tword + print_top_words(lda, tf_vectorizer_adj.get_feature_names_out(), 8)
-        save_topic(tword,id)
+        # save_topic(tword,id)

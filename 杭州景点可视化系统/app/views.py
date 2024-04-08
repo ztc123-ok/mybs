@@ -3,9 +3,10 @@ from app.models import User
 from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
-from app.mechineLearning import LDA
+from mechineLearning import LDA
 from app.task import mytask
 
+# 哈哈哈，线程居然可以放在这启动
 mytask.doTask()
 
 def login(request):
@@ -207,7 +208,7 @@ def getDetail(request,id):
     userInfo = User.objects.get(username=username)
     year, mon, day = getHomeData.getNowTime()
     sight = getDetailData.getSightById(id)
-    CommentsTimesort = getDetailData.getCommentsById(id)
+    CommentsTimesort,positiveRate = getDetailData.getCommentsById(id)
     try:
         sight.photos = sight.photos.split(",")[0].split("\"")[1]
     except:
@@ -238,6 +239,7 @@ def getDetail(request,id):
             'senceWords':senceWords,
         },
         'CommentsTimesort':CommentsTimesort,
+        'positiveRate':positiveRate,
     })
 
 

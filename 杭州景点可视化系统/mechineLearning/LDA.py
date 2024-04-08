@@ -283,6 +283,8 @@ if __name__ == "__main__":
             tf_adj = tf_vectorizer_adj.fit_transform(data["content_adj"].tolist())
 
             # 看下来2个效果比较好，一个是景点特色，一个是游客感受
+            # 百度文心一言告诉我，通过词性筛选聚焦了数据，那么选取主题数为1是有意义的
+            # 对于一对一文本可以只选取主题数为1
             lda = LatentDirichletAllocation(n_components=1, max_iter=60, learning_method='batch', random_state=12345)
             lda.fit(tf_noun)
             # 景点特色

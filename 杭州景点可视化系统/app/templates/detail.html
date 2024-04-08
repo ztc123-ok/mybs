@@ -152,7 +152,7 @@
               <div class="card recent-sales overflow-auto">
 
                 <div class="card-body">
-                  <h5 class="card-title">最新评论 <span>| 好评率？</span></h5>
+                  <h5 class="card-title">最新评论 <span>| 好评率: {{positiveRate}}%</span></h5>
 
                   <table class="table table-borderless datatable">
                     <thead>
@@ -170,7 +170,7 @@
                         <tr>
                         <th scope="row"><a href="#">#{{ i.id }}</a></th>
                         <td style="width:80px">{{ i.comments_user }}</td>
-                        <td style="width:400px"><a href="#" class="text-primary">{{ i.comments }}</a></td>
+                        <td style="width:380px"><a href="#" class="text-primary">{{ i.comments }}</a></td>
                         <td style="width:80px;text-align: center;">
                           {% if i.positive == '好评'  %}
                           <span class="badge bg-success">
@@ -190,7 +190,7 @@
                         </td>
                         <td style="width:80px">
                           <span class="text-muted">
-                          {{ i.create_time }}
+                          {{ i.comments_time }}
                           </span>
                         </td>
                         </tr>
