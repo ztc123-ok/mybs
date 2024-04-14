@@ -1,8 +1,9 @@
 from django.shortcuts import render,redirect
-from app.models import User
+from app.models import User,TaskSetting
 from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
+import re
 from mechineLearning import LDA
 from app.task import mytask
 
@@ -223,8 +224,8 @@ def getDetail(request,id):
         # sight.save()
         # topicWords = topic.split(";")[0].split(" ")
         # senceWords = topic.split(";")[1].split(" ")
-        topicWords = "这个景点太冷门了吧"
-        senceWords = "这个景点太冷门了吧"
+        topicWords = "这个景点太冷门了"
+        senceWords = "这个景点太冷门了"
 
     return render(request, 'detail.html', {
         'userInfo': userInfo,
@@ -310,3 +311,30 @@ def passengerChar(request):
         },
     })
 
+def taskSetting(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    taskInfo = TaskSetting.objects.get(id=1)
+    if request.method == 'POST':
+        update_time = request.POST.get('update_time')
+        if not request.POST.get('update_time'):
+            update_time = taskInfo.update_time
+        pattern = r'^([01]\d|2[0-3]):([0-5]\d)$'
+        if re.match(pattern, update_time):
+            taskInfo.update_time = update_time
+            taskInfo.spider_type = request.POST.get('spider_type')
+            taskInfo.machine_type = request.POST.get('machine_type')
+            taskInfo.save()
+        else:
+            return errorResponse.errorResponse(request,'定时任务时间设置有误 00:00')
+    taskInfo = TaskSetting.objects.get(id=1)
+    return render(request,'taskSetting.html',{
+        'userInfo': userInfo,
+        'taskInfo':taskInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+    })

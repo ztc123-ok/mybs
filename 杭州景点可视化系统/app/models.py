@@ -8,15 +8,15 @@
 from django.db import models
 
 
-class District(models.Model):
+class TaskSetting(models.Model):
     id = models.BigAutoField(primary_key=True)
-    district = models.CharField(max_length=20, blank=True, null=True)
-    passenger_number = models.BigIntegerField(blank=True, null=True)
-    mydate = models.DateField(blank=True, null=True)
+    update_time = models.CharField(max_length=20, blank=True, null=True)
+    spider_type = models.BigIntegerField(blank=True, null=True)
+    machine_type =  models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         #managed = False
-        db_table = 'district'
+        db_table = 'task'
 
 
 class Passenger(models.Model):

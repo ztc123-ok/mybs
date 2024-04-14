@@ -40,8 +40,13 @@
       <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
         <h1 style="font-size:50px">{{ errorMsg }}</h1>
         <h2>该操作发生了错误</h2>
-        <a class="btn" href="{% url 'login' %}">回到登录页面</a>
-        <img src="/static/img/not-found.svg" class="img-fluid py-5" alt="Page Not Found">
+            {% if errorMsg == '定时任务时间设置有误 00:00' %}
+            <a class="btn" href="{% url 'taskSetting' %}">返回</a>
+            <img src="/static/img/not-found.svg" class="img-fluid py-5" alt="Page Not Found">
+            {% else %}
+            <a class="btn" href="{% url 'login' %}">回到登录页面</a>
+            <img src="/static/img/not-found.svg" class="img-fluid py-5" alt="Page Not Found">
+            {% endif %}
       </section>
 
     </div>

@@ -1,8 +1,23 @@
 import _thread
 import time
+from app.models import User,TaskSetting
 from spider import passenger,update_sight
 from mechineLearning import use_textCNN
 import subprocess
+
+def getChangePassword(userInfo,passwordInfo):
+    oldPwd = passwordInfo['oldPassword']
+    newPwd = passwordInfo['newPassword']
+    newPwdConfirm = passwordInfo['newPasswordConfirm']
+    user = User.objects.get(username=userInfo.username)
+
+    if oldPwd != userInfo.password:
+        return "原始密码不正确"
+    if newPwd != newPwdConfirm:
+        return "两次密码输入不一致"
+
+    user.password = newPwd
+    user.save()
 
 def run_restart():
     # 构建迁移命令
@@ -29,16 +44,19 @@ def print_time(threadName,delay):
 
     # 这里之后写一个死循环，到时间点执行更新函数 ，这里要设sleep不然太耗cpu，判断给他一个区间；定时任务更新数据库记得使用django的save
     while True:
+        taskInfo = TaskSetting.objects.get(id=1)
         time_now = time.strftime("%H:%M", time.localtime())  # 刷新
         time.sleep(delay)
-        if time_now == "14:00":  # 此处设置每天定时的时间
+        if time_now == taskInfo.update_time:  # 此处设置每天定时的时间
 
             # 此处3行替换为需要执行的动作
             print('触发自动更新。。。')
-            # passenger.passenger() # 特定景点+客流量更新（推荐）
-            # update_sight.updateTask() # 更新全部景点（注意：景点有2000+，更新一次需要10h+，不推荐）
+            if taskInfo.spider_type == 1:
+                passenger.passenger() # 特定景点+客流量更新（推荐）
+            elif taskInfo.spider_type == 2:
+                update_sight.updateTask() # 更新全部景点（注意：景点有2000+，更新一次需要10h+，不推荐）
             time.sleep(66)  # 因为以秒定时，所以暂停66秒，使之不会在60秒内执行多次
-            use_textCNN.textCNNTask()
+            use_textCNN.textCNNTask(taskInfo.machine_type)
             run_restart()
 
 def doTask():

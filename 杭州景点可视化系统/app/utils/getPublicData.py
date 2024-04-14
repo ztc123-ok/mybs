@@ -31,7 +31,8 @@ def getAllWestlakesInfoData():
 def getAllCommentsData():
     return XcComments.objects.all()
 
-def getAllCommentsTimesortData():
-    CommentsTimesortData = sorted(XcCommentsTimesort.objects.all(), key=lambda x: x.comments_time ,reverse=True)
+def getAllCommentsTimesortData(id):
+    CommentsTimesortData = XcCommentsTimesort.objects.filter(sight_id=id)
+    CommentsTimesortData = sorted(CommentsTimesortData, key=lambda x: x.comments_time ,reverse=True)
     return CommentsTimesortData
 

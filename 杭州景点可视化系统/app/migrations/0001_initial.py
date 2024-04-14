@@ -12,15 +12,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='District',
+            name='TaskSetting',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('district', models.CharField(blank=True, max_length=20, null=True)),
-                ('passenger_number', models.BigIntegerField(blank=True, null=True)),
-                ('mydate', models.DateField(blank=True, null=True)),
+                ('update_time', models.CharField(blank=True, max_length=20, null=True)),
+                ('spider_type', models.BigIntegerField(blank=True, null=True)),
+                ('machine_type', models.BigIntegerField(blank=True, null=True)),
             ],
             options={
-                'db_table': 'district',
+                'db_table': 'task',
             },
         ),
         migrations.CreateModel(

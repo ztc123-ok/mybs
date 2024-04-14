@@ -46,7 +46,10 @@ def read_data(sight_id,num = None):
     connect = pymysql.Connect(host="localhost", user="root", password="root", port=3307, db="hangzhou",charset="utf8")
     cursor = connect.cursor()
 
-    sql = "select id,comments from xc_comments_timesort where sight_id = {}".format(sight_id)
+    if num == -1:
+        sql = "select id,comments from xc_comments_timesort where sight_id = {} and (positive IS NULL OR positive = '')".format(sight_id)
+    else:
+        sql = "select id,comments from xc_comments_timesort where sight_id = {}".format(sight_id)
     cursor.execute(sql)
     rest = cursor.fetchall()
     data = [row[1] for row in rest]
@@ -220,20 +223,25 @@ file_stop = 'hit_stopwords.txt'   # 停用词表
 tf_json = "word_2_index.json"
 model_pt = 'textCNN.pt'
 
-def textCNNTask():
+def textCNNTask(machine_type):
     global file_stop
     global tf_json
     global model_pt
     file_stop = "mechineLearning/hit_stopwords.txt"
     tf_json = 'mechineLearning/word_2_index.json'
     model_pt = 'mechineLearning/textCNN.pt'
-    my_list = ['1']
-    # my_list = list(range(1, 1861))
+    # my_list = ['1']
+    my_list = list(range(1, 1861))
     for sight_id in my_list:
         print("标注景点：",sight_id)
         sight_id = str(sight_id)
 
-        texts, labels = read_data(sight_id)
+        if machine_type == 1:
+            texts, labels = read_data(sight_id,-1)
+        elif machine_type == 2:
+            texts, labels = read_data(sight_id)
+        elif machine_type == 3:
+            return
         print(len(texts))
         results = doTextCNN(texts, labels)
         for i in range(len(texts)):
