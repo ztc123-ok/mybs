@@ -2,7 +2,7 @@ import _thread
 import time
 from app.models import User,TaskSetting
 from spider import passenger,update_sight
-from mechineLearning import use_textCNN
+from machineLearning import use_textCNN
 import subprocess
 
 def getChangePassword(userInfo,passwordInfo):

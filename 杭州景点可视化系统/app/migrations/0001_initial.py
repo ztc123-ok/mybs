@@ -24,6 +24,26 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='TextCNN',
+            fields=[
+                ('id', models.BigAutoField(primary_key=True, serialize=False)),
+                ('embedding', models.BigIntegerField(blank=True, null=True)),
+                ('epoch', models.BigIntegerField(blank=True, null=True)),
+                ('learning_rate', models.DecimalField(blank=True, decimal_places=8, max_digits=10, null=True)),
+                ('max_len', models.BigIntegerField(blank=True, null=True)),
+                ('batch_size', models.BigIntegerField(blank=True, null=True)),
+                ('hidden_num', models.BigIntegerField(blank=True, null=True)),
+                ('accuracy', models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True)),
+                ('precisions', models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True)),
+                ('recall', models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True)),
+                ('specificity', models.DecimalField(blank=True, decimal_places=2, max_digits=6, null=True)),
+                ('best_use', models.BigIntegerField(blank=True, null=True)),
+            ],
+            options={
+                'db_table': 'textCNN',
+            },
+        ),
+        migrations.CreateModel(
             name='Passenger',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),

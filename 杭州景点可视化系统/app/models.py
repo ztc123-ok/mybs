@@ -12,11 +12,29 @@ class TaskSetting(models.Model):
     id = models.BigAutoField(primary_key=True)
     update_time = models.CharField(max_length=20, blank=True, null=True)
     spider_type = models.BigIntegerField(blank=True, null=True)
-    machine_type =  models.BigIntegerField(blank=True, null=True)
+    machine_type = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         #managed = False
         db_table = 'task'
+
+class TextCNN(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    embedding = models.BigIntegerField(blank=True, null=True)
+    epoch = models.BigIntegerField(blank=True, null=True)
+    learning_rate = models.DecimalField(max_digits=10, decimal_places=8, blank=True, null=True)
+    max_len = models.BigIntegerField(blank=True, null=True)
+    batch_size = models.BigIntegerField(blank=True, null=True)
+    hidden_num = models.BigIntegerField(blank=True, null=True)
+    accuracy = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    precisions = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    recall = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    specificity = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    best_use = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        #managed = False
+        db_table = 'textCNN'
 
 
 class Passenger(models.Model):

@@ -51,7 +51,7 @@ def read_data(data_path,num = None):
     labels = [] #类别
     stop = [] #停用词表
 
-    file_stop = './stopwords/hit_stopwords.txt'  # 停用词表
+    file_stop = 'machineLearning/hit_stopwords.txt'  # 停用词表
     with open(file_stop, 'r', encoding='utf-8-sig') as f:
         lines = f.readlines()  # lines是list类型
         for line in lines:
@@ -88,7 +88,7 @@ def build_curpus(train_texts,embedding_num):
     #words_embedding 通常指的是这样一个嵌入向量矩阵，其中每一行代表词汇表中的一个单词的嵌入向量
     #nn.Embedding用来将一个数字变成一个指定维度的向量,作为模型的第一层,这n维的向量会参与模型训练并且得到更新，从而数字会有一个更好的128维向量的表示
     #这里返回所有数字对应的向量表
-    tf = open("word_2_index.json", "w")
+    tf = open("machineLearning/word_2_index_new.json", "w")
     json.dump(word_2_index, tf)
     tf.close()
     return word_2_index,nn.Embedding(len(word_2_index),embedding_num)
@@ -171,6 +171,93 @@ class TextCNNModel(nn.Module):
             # 预测值最大下标返回（概率）
             return torch.argmax(pre,dim=-1)
 
+def train_model(embedding,epoch,learning_rate,max_len,batch_size,hidden_num):
+    data_path = "machineLearning/comment.csv"
+
+    texts,labels = read_data(data_path)
+
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.15, shuffle=True)
+    print("占比情况",Counter(y_train))
+    # print(Counter(y_train)[0])
+    # print(Counter(y_train)[1])
+    # data_path = "test.csv"
+    # from use_textCNN import read_data
+    # t,l = read_data(data_path)
+    #
+    # X_test =  t
+    # y_test =  l
+
+    # 分别输出训练集的 X, y形状， 测试集的X, y的形状
+    print(X_train[:5])
+    print(y_train[:5])
+
+    lr = learning_rate # 学习率
+
+    class_num = len(set(y_train))
+    # 使用GPU训练模型
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+    # word_2_index：所有word对应的数字
+    # words_embedding：所有数字对应的向量
+    word_2_index,words_embedding = build_curpus(X_train,embedding)
+
+    # 训练集数据
+    train_dataset = TextDataset(X_train,y_train,word_2_index,max_len)
+    # DataLoader用于多线程地读取数据，提取到一批数据后，就可以将其输入到网络中进行训练或推理
+    # 需要使用自定义Dataset，并且至少应包含__init__、__len__和__getitem__这三个函数。其中，__init__用于传入数据，__len__返回数据集的大小（即item的数量），而__getitem__则用于返回一条训练数据，并将其转换为tensor
+    train_loader = DataLoader(train_dataset,batch_size,shuffle=False)
+
+    # 测试集数据
+    test_dataset = TextDataset(X_test,y_test,word_2_index,max_len)
+    test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
+
+    model = TextCNNModel(words_embedding,max_len,class_num,hidden_num).to(device)
+    # 优化器
+    opt = torch.optim.AdamW(model.parameters(),lr=lr)
+
+    for e in range(epoch):
+        # 训练模型
+        for batch_idx,batch_label in train_loader:
+            batch_idx = batch_idx.to(device)
+            batch_label = batch_label.to(device)
+            loss = model.forward(batch_idx,batch_label)
+            loss.backward()
+            opt.step()
+            opt.zero_grad()
+            #print(f"loss:{loss:.3f}")
+        print(f"loss:{loss:.3f}")
+
+        # 看模型效果
+        right_num = 0
+        p_num = 0
+        n_num = 0
+        for batch_idx,batch_label in test_loader:
+            batch_idx = batch_idx.to(device)
+            batch_label = batch_label.to(device)
+            pre = model.forward(batch_idx)
+            right_num += int(torch.sum(pre==batch_label))
+            p_num += torch.sum((pre == 1) & (batch_label == 1)).item()
+            n_num += torch.sum((pre == 0) & (batch_label == 0)).item()
+        # print(right_num)
+        # print(p_num)
+        # print(n_num)
+        accuracy = round(right_num/len(X_test)*100,2)
+        precisions = round(p_num / (p_num+Counter(y_test)['0']-n_num) * 100,2)
+        recall = round(p_num / Counter(y_test)['1'] * 100,2)
+        specificity = round(n_num / Counter(y_test)['0'] * 100,2)
+        # best 0.828
+        # embedding = 20 max_len = 20 batch_size = 10 epoch = 15 size = 0.2 hidden_num = 2
+        print(f"Accuracy = {accuracy:.2f}%")
+        print(f"Precision: = {precisions:.2f}%")
+        print(f"Recall: = {recall:.2f}%")
+        print(f"Specificity: = {specificity:.2f}%")
+
+        # 保存模型
+        if e == epoch-1:
+            torch.save(model, 'machineLearning/textCNN_new.pt')
+            return accuracy,precisions,recall,specificity
+
 if __name__ == "__main__":
     data_path = "comment.csv"
 
@@ -179,6 +266,8 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.10, shuffle=True)
     print("占比情况",Counter(y_train))
+    # print(Counter(y_train)[0])
+    # print(Counter(y_train)[1])
     # data_path = "test.csv"
     # from use_textCNN import read_data
     # t,l = read_data(data_path)
@@ -242,8 +331,7 @@ if __name__ == "__main__":
         # best 0.828
         # embedding = 20 max_len = 20 batch_size = 10 epoch = 10 size = 0.2 hidden_num = 2
         print(f"acc = {right_num/len(X_test)*100:.2f}%")
-
-    # 保存模型
+        # 保存模型
     torch.save(model, 'textCNN.pt')
 
 

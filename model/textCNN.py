@@ -179,6 +179,8 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.01, shuffle=True)
     print("占比情况",Counter(y_train))
+    print(Counter(y_train)['0'])
+    print(Counter(y_train)['1'])
     # data_path = "test.csv"
     # from use_textCNN import read_data
     # t,l = read_data(data_path)
@@ -232,16 +234,25 @@ if __name__ == "__main__":
 
         # 看模型效果
         right_num = 0
+        p_num = 0
+        n_num = 0
         for batch_idx,batch_label in test_loader:
             batch_idx = batch_idx.to(device)
             batch_label = batch_label.to(device)
             pre = model.forward(batch_idx)
             right_num += int(torch.sum(pre==batch_label))
+            p_num += torch.sum((pre == 1) & (batch_label == 1)).item()
+            n_num += torch.sum((pre == 0) & (batch_label == 0)).item()
         print(right_num)
+        print(p_num)
+        print(n_num)
 
         # best 0.828
         # embedding = 20 max_len = 20 batch_size = 10 epoch = 10 size = 0.2 hidden_num = 2
-        print(f"acc = {right_num/len(X_test)*100:.2f}%")
+        print(f"Acc = {right_num/len(X_test)*100:.2f}%")
+        print(f"Precision: = {p_num / (p_num+Counter(y_test)['0']-n_num) * 100:.2f}%")
+        print(f"Recall: = {p_num / Counter(y_test)['1'] * 100:.2f}%")
+        print(f"Specificity: = {n_num / Counter(y_test)['0'] * 100:.2f}%")
 
     # 保存模型
     torch.save(model, 'textCNN.pt')

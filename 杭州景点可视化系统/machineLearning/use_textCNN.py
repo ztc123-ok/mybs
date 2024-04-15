@@ -66,7 +66,7 @@ def split_comments(comments,num = None):
     texts = [] #评论
     stop = [] #停用词表
 
-    #file_stop = 'app/mechineLearning/hit_stopwords.txt'  # 停用词表
+    #file_stop = 'app/machineLearning/hit_stopwords.txt'  # 停用词表
     with open(file_stop, 'r', encoding='utf-8-sig') as f:
         lines = f.readlines()  # lines是list类型
         for line in lines:
@@ -129,7 +129,7 @@ def doTextCNN(comments,labels):
     # 使用GPU 预测
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-    # model_pt = 'app/mechineLearning/textCNN.pt'
+    # model_pt = 'app/machineLearning/textCNN.pt'
     mymodel = torch.load(model_pt)
     tf = open(tf_json, "r")
     word_2_index = json.load(tf)
@@ -139,7 +139,7 @@ def doTextCNN(comments,labels):
     test_dataset = TextDataset(texts,labels,word_2_index,max_len)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
-    # mymodel = torch.load('app/mechineLearning/textCNN.pt')
+    # mymodel = torch.load('app/machineLearning/textCNN.pt')
     mymodel.to(device)
     results = []
 
@@ -216,9 +216,9 @@ class TextCNNModel(nn.Module):
             # 预测值最大下标返回（概率）
             return torch.argmax(pre,dim=-1)
 
-# file_stop = 'app/mechineLearning/hit_stopwords.txt'   # 停用词表
-# tf_json = "app/mechineLearning/word_2_index.json"
-# model_pt = 'app/mechineLearning/textCNN.pt'
+# file_stop = 'app/machineLearning/hit_stopwords.txt'   # 停用词表
+# tf_json = "app/machineLearning/word_2_index.json"
+# model_pt = 'app/machineLearning/textCNN.pt'
 file_stop = 'hit_stopwords.txt'   # 停用词表
 tf_json = "word_2_index.json"
 model_pt = 'textCNN.pt'
@@ -227,9 +227,9 @@ def textCNNTask(machine_type):
     global file_stop
     global tf_json
     global model_pt
-    file_stop = "mechineLearning/hit_stopwords.txt"
-    tf_json = 'mechineLearning/word_2_index.json'
-    model_pt = 'mechineLearning/textCNN.pt'
+    file_stop = "machineLearning/hit_stopwords.txt"
+    tf_json = 'machineLearning/word_2_index.json'
+    model_pt = 'machineLearning/textCNN.pt'
     # my_list = ['1']
     my_list = list(range(1, 1861))
     for sight_id in my_list:

@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
-from app.models import User,TaskSetting
+from app.models import User,TaskSetting,TextCNN
 from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
 import re
-from mechineLearning import LDA
+from machineLearning import textCNN
+from machineLearning import LDA
 from app.task import mytask
 
 # 哈哈哈，线程居然可以放在这启动
@@ -332,6 +333,64 @@ def taskSetting(request):
     return render(request,'taskSetting.html',{
         'userInfo': userInfo,
         'taskInfo':taskInfo,
+        'nowTime': {
+            'year': year,
+            'mon': mon,
+            'day': day,
+        },
+    })
+
+def modelSetting(request):
+    username = request.session.get('username')
+    userInfo = User.objects.get(username=username)
+    year, mon, day = getHomeData.getNowTime()
+    textCNN_parameter = TextCNN.objects.get(best_use=1)
+    model_rating = {
+        'accuracy': '待评估',
+        'precisions': '待评估',
+        'recall': '待评估',
+        'specificity': '待评估',
+    }
+    if request.method == 'POST':
+        if not request.POST.get('embedding'):
+            embedding = int(textCNN_parameter.embedding)
+        else:
+            embedding = request.POST.get('embedding')
+        if not request.POST.get('epoch'):
+            epoch = int(textCNN_parameter.epoch)
+        else:
+            epoch = request.POST.get('epoch')
+        if not request.POST.get('learning_rate'):
+            learning_rate = float(textCNN_parameter.learning_rate)
+        else:
+            learning_rate = request.POST.get('learning_rate')
+        if not request.POST.get('max_len'):
+            max_len = int(textCNN_parameter.max_len)
+        else:
+            max_len = request.POST.get('max_len')
+        if not request.POST.get('batch_size'):
+            batch_size = int(textCNN_parameter.batch_size)
+        else:
+            batch_size = request.POST.get('batch_size')
+        hidden_num = 2
+
+        # 区分该post请求是 更新模型操作 还是 训练模型操作
+        if request.POST.get('update_model'):
+            print(request.POST.get('update_model'))
+        else:
+            accuracy,precisions,recall,specificity = textCNN.train_model(embedding,epoch,learning_rate,max_len,batch_size,hidden_num)
+            model_rating['accuracy'] = accuracy
+            model_rating['precisions'] = precisions
+            model_rating['recall'] = recall
+            model_rating['specificity'] = specificity
+            TextCNN.objects.create(embedding=embedding, epoch=epoch, learning_rate=learning_rate,
+                                max_len=max_len,batch_size=batch_size,hidden_num=hidden_num,accuracy=accuracy,precisions=precisions,
+                                   recall=recall,specificity=specificity,best_use=0)
+    textCNN_parameter = TextCNN.objects.get(best_use=1)
+    return render(request,'modelSetting.html',{
+        'userInfo': userInfo,
+        'textCNN_parameter': textCNN_parameter,
+        'model_rating': model_rating,
         'nowTime': {
             'year': year,
             'mon': mon,

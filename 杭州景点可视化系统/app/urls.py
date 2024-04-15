@@ -14,4 +14,5 @@ urlpatterns = [
     path('rateChar/',views.rateChar,name='rateChar'),
     path('passengerChar/',views.passengerChar,name='passengerChar'),
     path('taskSetting/',views.taskSetting,name='taskSetting'),
+    path('modelSetting/', views.modelSetting, name='modelSetting'),
 ]

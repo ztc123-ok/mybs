@@ -1,5 +1,5 @@
 from app.utils import getPublicData
-from mechineLearning import LDA,use_textCNN
+from machineLearning import LDA,use_textCNN
 import heapq
 import time
 from datetime import datetime
