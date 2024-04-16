@@ -247,6 +247,24 @@ def textCNNTask(machine_type):
         for i in range(len(texts)):
             update_possitive(labels[i], results[i])
 
+def textCNNOne(sight_id):
+    global file_stop
+    global tf_json
+    global model_pt
+    file_stop = "machineLearning/hit_stopwords.txt"
+    tf_json = 'machineLearning/word_2_index.json'
+    model_pt = 'machineLearning/textCNN.pt'
+    # my_list = ['24']
+    my_list = list(sight_id)
+    for sight_id in my_list:
+        print("标注景点：",sight_id)
+        sight_id = str(sight_id)
+
+        texts, labels = read_data(sight_id)
+        print(len(texts))
+        results = doTextCNN(texts, labels)
+        for i in range(len(texts)):
+            update_possitive(labels[i], results[i])
 
 if __name__ == "__main__":
     # my_list = ['24']

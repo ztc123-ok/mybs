@@ -36,6 +36,7 @@
                           <label for="inputText" class="col-sm-2 col-form-label">任务时间</label>
                           <div class="col-sm-10">
                             <input type="text" name="update_time" class="form-control" placeholder={{ taskInfo.update_time }}>
+                            <input type="hidden" name="update_type" class="form-control" value = 0>
                           </div>
                         </div>
                         <div class="row mb-3">
@@ -81,9 +82,69 @@
 
             </div>
           </div><!-- End Recent Activity -->
+          <!-- Recent Activity -->
 
         </div><!-- End Right side columns -->
+          <div class="col-lg-6">
+          <div class="card">
 
+            <div class="card-body">
+              <h5 class="card-title">手动触发</h5>
+
+              <div class="activity">
+                    <form action="{% url 'taskSetting' %}" method="POST">
+                        <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">评论更新</label>
+                        </div>
+                        <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">景点id</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="sight_id" class="form-control" >
+                            <input type="hidden" name="update_type" class="form-control" value = 1>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputText" class="col-sm-2 col-form-label"></label>
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+              </div>
+
+            </div>
+          </div><!-- End Recent Activity -->
+          </div>
+          <div class="col-lg-6">
+          <div class="card">
+
+            <div class="card-body">
+              <h5 class="card-title"><br/></h5>
+
+              <div class="activity">
+                    <form action="{% url 'taskSetting' %}" method="POST">
+                        <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">情感标注</label>
+                        </div>
+                        <div class="row mb-3">
+                          <label for="inputText" class="col-sm-2 col-form-label">景点id</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="sight_id" class="form-control" >
+                            <input type="hidden" name="update_type" class="form-control" value = 2>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputText" class="col-sm-2 col-form-label"></label>
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+              </div>
+
+            </div>
+          </div><!-- End Recent Activity -->
+          </div>
       </div>
     </section>
 {% endblock %}

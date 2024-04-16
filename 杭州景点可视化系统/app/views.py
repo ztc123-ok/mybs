@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
-from app.models import User,TaskSetting,TextCNN
+from app.models import User,TaskSetting,TextCNN,XcSight
 from django.http import HttpResponse
 from app.utils import errorResponse,getHomeData,getPublicData,getChangeSelfInfoData,getTableData,getEchartsData,getDetailData
 import time
 import re
-from machineLearning import textCNN
+from machineLearning import textCNN,use_textCNN
+from spider import update_sight
 from machineLearning import LDA
 from app.task import mytask
 
@@ -318,19 +319,34 @@ def taskSetting(request):
     year, mon, day = getHomeData.getNowTime()
     taskInfo = TaskSetting.objects.get(id=1)
     if request.method == 'POST':
+        update_type = str(request.POST.get('update_type'))
         update_time = request.POST.get('update_time')
-        if not request.POST.get('update_time'):
-            update_time = taskInfo.update_time
-        pattern = r'^([01]\d|2[0-3]):([0-5]\d)$'
-        if re.match(pattern, update_time):
-            taskInfo.update_time = update_time
-            if request.POST.get('spider_type'):
-                taskInfo.spider_type = request.POST.get('spider_type')
-            if request.POST.get('machine_type'):
-                taskInfo.machine_type = request.POST.get('machine_type')
-            taskInfo.save()
-        else:
-            return errorResponse.errorResponse(request,'定时任务时间设置有误 00:00')
+        print("update_type",update_type)
+        # 更新定时任务
+        if update_type == "0":
+            if not request.POST.get('update_time'):
+                update_time = taskInfo.update_time
+            pattern = r'^([01]\d|2[0-3]):([0-5]\d)$'
+            if re.match(pattern, update_time):
+                taskInfo.update_time = update_time
+                if request.POST.get('spider_type'):
+                    taskInfo.spider_type = request.POST.get('spider_type')
+                if request.POST.get('machine_type'):
+                    taskInfo.machine_type = request.POST.get('machine_type')
+                taskInfo.save()
+            else:
+                return errorResponse.errorResponse(request,'定时任务时间设置有误 00:00')
+        # 更新景点评论
+        elif update_type == "1":
+            sight_id = request.POST.get('sight_id')
+            print("正在更新一个景点的评论。。。", sight_id)
+            sightInfo = XcSight.objects.get(id=sight_id)
+            update_sight.update_sight(sightInfo.url)
+        # 标注特定景点
+        elif update_type == "2":
+            sight_id = request.POST.get('sight_id')
+            print("正在标注一个景点评论的情感。。。", sight_id)
+            use_textCNN.textCNNOne(sight_id)
     taskInfo = TaskSetting.objects.get(id=1)
     return render(request,'taskSetting.html',{
         'userInfo': userInfo,
