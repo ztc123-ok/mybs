@@ -86,7 +86,10 @@
                         <div class="row mb-3">
                             <label for="inputText" class="col-sm-4 col-form-label"></label>
                             <div class="col-sm-3">
-                                <button type="submit" class="btn btn-primary">重新训练</button>
+                                <button type="submit" class="btn btn-primary" id="myButton" onclick="disableButton()">重新训练</button>
+                                <div class="spinner-border" role="status" id="loader" style="display: none; text-align: center;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -178,6 +181,15 @@
 {% endblock %}
 {% block echarts %}
     <script>
+        function disableButton() {
+            var button = document.getElementById('myButton');
+            var loader = document.getElementById('loader');
 
+            // 禁用按钮
+            button.style.display = 'none';
+            // 显示转圈圈图标
+            loader.style.display = 'block';
+
+        }
     </script>
 {% endblock %}

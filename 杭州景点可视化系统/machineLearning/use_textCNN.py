@@ -264,6 +264,7 @@ def textCNNOne(sight_id):
         print(len(texts))
         results = doTextCNN(texts, labels)
         for i in range(len(texts)):
+            print(results[i])
             update_possitive(labels[i], results[i])
 
 if __name__ == "__main__":

@@ -338,15 +338,17 @@ def taskSetting(request):
                 return errorResponse.errorResponse(request,'定时任务时间设置有误 00:00')
         # 更新景点评论
         elif update_type == "1":
-            sight_id = request.POST.get('sight_id')
-            print("正在更新一个景点的评论。。。", sight_id)
-            sightInfo = XcSight.objects.get(id=sight_id)
-            update_sight.update_sight(sightInfo.url)
+            if request.POST.get('sight_id'):
+                sight_id = request.POST.get('sight_id')
+                print("正在更新一个景点的评论。。。", sight_id)
+                sightInfo = XcSight.objects.get(id=sight_id)
+                update_sight.update_sight(sightInfo.url)
         # 标注特定景点
         elif update_type == "2":
-            sight_id = request.POST.get('sight_id')
-            print("正在标注一个景点评论的情感。。。", sight_id)
-            use_textCNN.textCNNOne(sight_id)
+            if request.POST.get('sight_id'):
+                sight_id = request.POST.get('sight_id')
+                print("正在标注一个景点评论的情感。。。", sight_id)
+                use_textCNN.textCNNOne(sight_id)
     taskInfo = TaskSetting.objects.get(id=1)
     return render(request,'taskSetting.html',{
         'userInfo': userInfo,
@@ -374,23 +376,23 @@ def modelSetting(request):
         if not request.POST.get('embedding'):
             embedding = int(textCNN_parameter.embedding)
         else:
-            embedding = request.POST.get('embedding')
+            embedding = int(request.POST.get('embedding'))
         if not request.POST.get('epoch'):
             epoch = int(textCNN_parameter.epoch)
         else:
-            epoch = request.POST.get('epoch')
+            epoch = int(request.POST.get('epoch'))
         if not request.POST.get('learning_rate'):
             learning_rate = float(textCNN_parameter.learning_rate)
         else:
-            learning_rate = request.POST.get('learning_rate')
+            learning_rate = float(request.POST.get('learning_rate'))
         if not request.POST.get('max_len'):
             max_len = int(textCNN_parameter.max_len)
         else:
-            max_len = request.POST.get('max_len')
+            max_len = int(request.POST.get('max_len'))
         if not request.POST.get('batch_size'):
             batch_size = int(textCNN_parameter.batch_size)
         else:
-            batch_size = request.POST.get('batch_size')
+            batch_size = int(request.POST.get('batch_size'))
         hidden_num = 2
 
         # 区分该post请求是 更新模型操作 还是 训练模型操作
