@@ -324,8 +324,10 @@ def taskSetting(request):
         pattern = r'^([01]\d|2[0-3]):([0-5]\d)$'
         if re.match(pattern, update_time):
             taskInfo.update_time = update_time
-            taskInfo.spider_type = request.POST.get('spider_type')
-            taskInfo.machine_type = request.POST.get('machine_type')
+            if request.POST.get('spider_type'):
+                taskInfo.spider_type = request.POST.get('spider_type')
+            if request.POST.get('machine_type'):
+                taskInfo.machine_type = request.POST.get('machine_type')
             taskInfo.save()
         else:
             return errorResponse.errorResponse(request,'定时任务时间设置有误 00:00')
@@ -350,6 +352,7 @@ def modelSetting(request):
         'precisions': '待评估',
         'recall': '待评估',
         'specificity': '待评估',
+        'new_parameter': {id: ''},
     }
     if request.method == 'POST':
         if not request.POST.get('embedding'):
@@ -376,16 +379,31 @@ def modelSetting(request):
 
         # 区分该post请求是 更新模型操作 还是 训练模型操作
         if request.POST.get('update_model'):
-            print(request.POST.get('update_model'))
+            print(request.POST.get('update_model'),request.POST.get('update_id'))
+            with open('machineLearning/textCNN_new.pt', 'rb') as file1:
+                content = file1.read()
+            with open('machineLearning/textCNN.pt', 'wb') as file2:
+                file2.write(content)
+            with open('machineLearning/word_2_index_new.json', 'rb') as file1:
+                content = file1.read()
+            with open('machineLearning/word_2_index.json', 'wb') as file2:
+                file2.write(content)
+            textCNN_parameter.best_use = 0
+            textCNN_parameter.save()
+            update_parameter = TextCNN.objects.get(id=request.POST.get('update_id'))
+            update_parameter.best_use = 1
+            update_parameter.save()
         else:
             accuracy,precisions,recall,specificity = textCNN.train_model(embedding,epoch,learning_rate,max_len,batch_size,hidden_num)
             model_rating['accuracy'] = accuracy
             model_rating['precisions'] = precisions
             model_rating['recall'] = recall
             model_rating['specificity'] = specificity
-            TextCNN.objects.create(embedding=embedding, epoch=epoch, learning_rate=learning_rate,
+            new_parameter = TextCNN.objects.create(embedding=embedding, epoch=epoch, learning_rate=learning_rate,
                                 max_len=max_len,batch_size=batch_size,hidden_num=hidden_num,accuracy=accuracy,precisions=precisions,
                                    recall=recall,specificity=specificity,best_use=0)
+            model_rating['new_parameter'] = new_parameter
+            print("id",new_parameter.id)
     textCNN_parameter = TextCNN.objects.get(best_use=1)
     return render(request,'modelSetting.html',{
         'userInfo': userInfo,

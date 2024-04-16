@@ -150,9 +150,13 @@
                         <div class="row mb-3">
                           <div class="col-sm-3">
                             <input type="hidden" name="update_model" class="form-control" value = 1>
+                            <input type="hidden" name="old_id" class="form-control" value = {{ textCNN_parameter.id }}>
                           </div>
                         </div>
                         <div class="row mb-3">
+                          <div class="col-sm-3">
+                            <input type="hidden" name="update_id" class="form-control" value = {{ model_rating.new_parameter.id }}>
+                          </div>
                         </div>
                         <br/>
                         <br/>
