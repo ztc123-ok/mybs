@@ -66,7 +66,7 @@ def get_passenger(url):
     print("开始向数据库插入客流数据。。。。")
     for i in range(len(sight_name)):
         # 两个网站景点名不一样，去携程找一下名字
-        xc_url = "https://you.ctrip.com/sight/Hangzhou14.html?keywords={}".format(sight_name[i])
+        xc_url = "https://you.ctrip.com/sight/Hangzhou14.html"
         chrome.get(xc_url)
         time.sleep(2 + random.random())
         html = chrome.page_source

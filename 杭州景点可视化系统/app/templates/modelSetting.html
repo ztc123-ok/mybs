@@ -33,7 +33,7 @@
               <div class="activity">
                     <form action="{% url 'modelSetting' %}" method="POST">
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">embedding</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">向量维度 (embedding)</label>
                           <div class="col-sm-3">
                             <input type="text" name="embedding_use" class="form-control" placeholder={{ textCNN_parameter.embedding }} readonly>
                           </div>
@@ -43,7 +43,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">epoch</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">迭代次数 (epoch)</label>
                           <div class="col-sm-3">
                             <input type="text" name="epoch_use" class="form-control" placeholder={{ textCNN_parameter.epoch }} readonly>
                           </div>
@@ -53,7 +53,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">learning_rate</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">学习率 (learning_rate)</label>
                           <div class="col-sm-3">
                             <input type="text" name="learning_rate_use" class="form-control" placeholder={{ textCNN_parameter.learning_rate }} readonly>
                           </div>
@@ -63,7 +63,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">max_len</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">句最大长度 (max_len)</label>
                           <div class="col-sm-3">
                             <input type="text" name="max_len_use" class="form-control" placeholder={{ textCNN_parameter.max_len }} readonly>
                           </div>
@@ -73,7 +73,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">batch_size</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">批处理大小 (batch_size)</label>
                           <div class="col-sm-3">
                             <input type="text" name="batch_size_use" class="form-control" placeholder={{ textCNN_parameter.batch_size }} readonly>
                           </div>
@@ -111,7 +111,7 @@
               <div class="activity">
                     <form action="{% url 'modelSetting' %}" method="POST">
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">accuracy</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">准确率 (accuracy)</label>
                           <div class="col-sm-3">
                             <input type="text" name="update_time" class="form-control" placeholder={{ textCNN_parameter.accuracy }} readonly>
                           </div>
@@ -121,7 +121,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">precisions</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">查准率 (precisions)</label>
                           <div class="col-sm-3">
                             <input type="text" name="update_time" class="form-control" placeholder={{ textCNN_parameter.precisions }} readonly>
                           </div>
@@ -131,7 +131,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">recall</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">召回率 (recall)</label>
                           <div class="col-sm-3">
                             <input type="text" name="update_time" class="form-control" placeholder={{ textCNN_parameter.recall }} readonly>
                           </div>
@@ -141,7 +141,7 @@
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label for="inputText" class="col-sm-4 col-form-label">specificity</label>
+                          <label for="inputText" class="col-sm-4 col-form-label">特异度 (specificity)</label>
                           <div class="col-sm-3">
                             <input type="text" name="update_time" class="form-control" placeholder={{ textCNN_parameter.specificity }} readonly>
                           </div>

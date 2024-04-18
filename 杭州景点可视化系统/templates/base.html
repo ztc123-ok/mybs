@@ -97,38 +97,16 @@
           <span>首页</span>
         </a>
       </li><!-- End Dashboard Nav -->
-      <li class="nav-heading">个人信息</li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'changeSelfInfo' %}">
-          <i class="bi bi-menu-button-wide"></i><span>修改个人信息</span>
-        </a>
-      </li><!-- End Components Nav -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'changePassword' %}">
-          <i class="bi bi-journal-text"></i><span>修改密码</span>
-        </a>
-
-      </li><!-- End Forms Nav -->
-      <li class="nav-heading">数据表格</li>
+      <li class="nav-heading">景点数据展示</li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'tableData' %}">
-          <i class="bi bi-layout-text-window-reverse"></i><span>数据操作</span>
-        </a>
-      </li><!-- End Tables Nav -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'modelSetting' %}">
-          <i class="bi bi-layout-text-window-reverse"></i><span>模型设置</span>
-        </a>
-      </li><!-- End Tables Nav -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'taskSetting' %}">
-          <i class="bi bi-layout-text-window-reverse"></i><span>定时任务设置</span>
+          <i class="bi bi-layout-text-window-reverse"></i><span>景点信息</span>
         </a>
       </li><!-- End Tables Nav -->
 
-      <li class="nav-heading">数据可视化</li>
+      <li class="nav-heading">景点数据分析</li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'districtChar' %}">
@@ -145,7 +123,33 @@
           <i class="bi bi-bar-chart"></i><span>客流量分析</span>
         </a>
       </li>
+      {% if userInfo.username == "admin" %}
+      <li class="nav-heading">系统数据设置</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'modelSetting' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>模型设置</span>
+        </a>
+      </li><!-- End Tables Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'taskSetting' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>定时任务设置</span>
+        </a>
+      </li><!-- End Tables Nav -->
+      </li><!-- End Tables Nav -->
+      {% endif %}
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改个人信息</span>
+        </a>
+      </li><!-- End Components Nav -->
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+
+      </li><!-- End Forms Nav -->
     </ul>
 
   </aside>

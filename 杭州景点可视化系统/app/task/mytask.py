@@ -1,6 +1,6 @@
 import _thread
 import time
-from app.models import User,TaskSetting
+from app.models import User,TaskSetting,XcSight
 from spider import passenger,update_sight
 from machineLearning import use_textCNN
 import subprocess
@@ -51,12 +51,17 @@ def print_time(threadName,delay):
 
             # 此处3行替换为需要执行的动作
             print('触发自动更新。。。')
+            # 特定景点+客流量更新（推荐）
             if taskInfo.spider_type == 1:
-                passenger.passenger() # 特定景点+客流量更新（推荐）
+                for i in range(1,3):
+                    sightInfo = XcSight.objects.get(id=i)
+                    update_sight.update_sight(sightInfo.url)
+            # 更新全部景点（注意：景点有2000+，更新一次需要10h+，不推荐）
             elif taskInfo.spider_type == 2:
-                update_sight.updateTask() # 更新全部景点（注意：景点有2000+，更新一次需要10h+，不推荐）
-            time.sleep(66)  # 因为以秒定时，所以暂停66秒，使之不会在60秒内执行多次
+                update_sight.updateTask()
+            time.sleep(6)  # 因为以秒定时，所以暂停66秒，使之不会在60秒内执行多次
             use_textCNN.textCNNTask(taskInfo.machine_type)
+            time.sleep(60)
             run_restart()
 
 def doTask():
