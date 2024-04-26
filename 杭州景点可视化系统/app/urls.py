@@ -15,4 +15,5 @@ urlpatterns = [
     path('passengerChar/',views.passengerChar,name='passengerChar'),
     path('taskSetting/',views.taskSetting,name='taskSetting'),
     path('modelSetting/', views.modelSetting, name='modelSetting'),
+    path('update/', views.update, name='update'),
 ]

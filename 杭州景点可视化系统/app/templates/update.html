@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title%}
+手动更新
+{% endblock %}
+
+{% block content %}
+      <div class="pagetitle" style="display: flex;align-items: center">
+      <div style="margin-right: auto">
+        <h1>手动更新</h1>
+        <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">系统数据设置</a></li>
+          <li class="breadcrumb-item active">手动更新</li>
+        </ol>
+      </nav>
+      </div>
+      <h5>
+        {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+      </h5>
+    </div>
+      <section class="section dashboard">
+      <div class="row">
+
+        <!-- Right side columns -->
+        <div class="col-lg-12">
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-body">
+              <form method="POST" action="{% url 'update' %}" class="row g-3 needs-validation" novalidate>
+                  <div class="col-8 d-flex align-items-center">
+                      <input type="text" name="sightText" class="form-control me-2" id="sightText" {% if sightText != 'None' %}
+                             value={{ sightText }}
+                                {% endif %} required style="width: 800px;">
+                      <button class="btn btn-primary" type="submit" style="width: 150px; height: 50px; font-size: 20px; white-space: nowrap; padding: 0 10px;">搜索</button>
+                  </div>
+              </form>
+              <h5 class="card-title">景点数据表格</h5>
+
+              <!-- Default Table -->
+              <table class="table table-striped table-hover" >
+                <thead>
+                  <tr>
+                    <th style="width:50px" scope="col">#</th>
+                    <th style="width:150px" scope="col">景点名称</th>
+                    <th style="width:100px" scope="col">图片</th>
+                    <th style="width:100px" scope="col"></th>
+                    <th style="width:100px" scope="col">评论更新</th>
+                    <th style="width:100px" scope="col">情感标注</th>
+                    <th style="width:100px" scope="col">操作</th>
+                    <th style="width:100px" scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in tableData %}
+                  <tr>
+                    <th style="line-height:70px" scope="row">{{ i.id }}</th>
+                    <td style="line-height:70px">{{ i.name }}</td>
+                    <td>
+                      <a href="{{ i.url }}">
+                        <img style="width:100%" src = "{{ i.photos }}" alt="">
+                      </a>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="line-height:70px;vertical-align: middle">
+                    <form action="{% url 'update' %}" method="POST">
+                      <input type="hidden" name="sightText"  value={{ sightText }} >
+                      <input type="hidden" name="page"  value={{ page }} >
+                      <input type="hidden" name="updateType" class="form-control me-2" value=1>
+                      <input type="hidden" name="sightId" class="form-control me-2" value={{ i.id }}>
+                      <button type="submit" class="btn btn-primary" id="myButton_{{ i.id }}" onclick="disableButton(this)">更新</button>
+                      <div class="spinner-border" role="status" id="loader_{{ i.id }}" style="display: none; text-align: center;">
+                        <span class="visually-hidden" >Loading...</span>
+                      </div>
+                    </form>
+                    </td>
+                    <td style="line-height:70px;vertical-align: middle">
+                    <form action="{% url 'update' %}" method="POST">
+                      <input type="hidden" name="sightText"  value={{ sightText }} >
+                      <input type="hidden" name="page"  value={{ page }} >
+                      <input type="hidden" name="updateType" class="form-control me-2" value=2>
+                      <input type="hidden" name="sightId" class="form-control me-2" value={{ i.id }}>
+                      <button type="submit" class="btn btn-primary" id="myButton2_{{ i.id }}" onclick="disableButton2(this)">标注</button>
+                      <div class="spinner-border" role="status" id="loader2_{{ i.id }}" style="display: none; text-align: center;">
+                        <span class="visually-hidden" >Loading...</span>
+                      </div>
+                    </form>
+                    </td>
+                    <td style="line-height:70px;vertical-align: middle">
+                      <a href="{% url 'getDetail' i.id %}" class="btn btn-primary waves-effect waves-light">详情</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                    {{ html_list|safe }}
+                  </ul>
+                </nav>
+              <!-- End Default Table Example -->
+            </div>
+          </div>
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+{% endblock %}
+{% block echarts %}
+    <script>
+        function disableButton(button) {
+            var loaderId = button.id.replace('myButton_', 'loader_');
+            var loader = document.getElementById(loaderId);
+
+            // 禁用按钮
+            button.style.display = 'none';
+            // 显示转圈圈图标
+            loader.style.display = 'block';
+
+        }
+        function disableButton2(button2) {
+            var loaderId2 = button2.id.replace('myButton2_', 'loader2_');
+            var loader2 = document.getElementById(loaderId2);
+
+            // 禁用按钮
+            button2.style.display = 'none';
+            // 显示转圈圈图标
+            loader2.style.display = 'block';
+
+        }
+    </script>
+{% endblock %}

@@ -62,7 +62,7 @@ def print_time(threadName,delay):
             time.sleep(6)  # 因为以秒定时，所以暂停66秒，使之不会在60秒内执行多次
             use_textCNN.textCNNTask(taskInfo.machine_type)
             time.sleep(60)
-            run_restart()
+            # run_restart()
 
 def doTask():
     try:
